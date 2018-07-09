@@ -490,29 +490,79 @@ Now we will consider convergence versus proposal width. In contrast to the previ
 
 $n_1,n_2$ don't matter
 
+RSAP prefers a lower value of $\Delta$ than Metropolis, but the optimal value for RSAP is better than the optimal value for Metropolis. This is so that more rejections happen, thus causing RSAP to adapt the proposal.
+
+Might should compare convergence vs. $\Delta$
+
 \begin{figure}[!htb]
 \minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_MCMCSteps_001D_00_AdaF.jpg}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_001D_00_AdaF.jpg}
 \endminipage\hfill
 \minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_MCMCSteps_001D_00_AdaT.jpg}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_001D_00_AdaT.jpg}
 \endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Gaussian. 100 steps per chain, 500 chains per width value.}
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Gaussian. 100 steps per chain, 500 chains per width value, threshold of 0.003.}
 \end{figure}
 
 \begin{figure}[!htb]
 \minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_MCMCSteps_003D_00_AdaF.jpg}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_003D_00_AdaF.jpg}
 \endminipage\hfill
 \minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_MCMCSteps_003D_00_AdaT.jpg}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_003D_00_AdaT.jpg}
 \endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 3D Gaussian. 500 steps per chain, 1000 chains per width value. Note the different vertical axis scale.}
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 3D Gaussian. 500 steps per chain, 1000 chains per width value, threshold of 0.003. Note the different vertical axis scale.}
 \end{figure}
 
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_00_AdaF.jpg}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_00_AdaT.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Ackley function. 150 steps per chain, 1000 chains per width value, threshold of 0.8.}
+\end{figure}
 
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_01_AdaF.jpg}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_01_AdaT.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Ackley function. 150 steps per chain, 1000 chains per width value, threshold of 0.8.}
+\end{figure}
 
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_00_AdaF.jpg}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_00_AdaT.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 2D Ackley function. 500 steps per chain, 1000 chains per width value, threshold of 0.8, $\Delta_0 = 3.5$.}
+\end{figure}
 
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_01_AdaF.jpg}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_01_AdaT.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 2D Ackley function. 500 steps per chain, 1000 chains per width value, threshold of 0.8, $\Delta_0 = 0.5$.}
+\end{figure}
+
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_02_AdaF.jpg}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_02_AdaT.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 2D Ackley function. 500 steps per chain, 1000 chains per width value, threshold of 0.8, $\Delta_0 = 0.01$.}
+\end{figure}
 
 
 \begin{comment}
