@@ -494,6 +494,9 @@ RSAP prefers a lower value of $\Delta$ than Metropolis, but the optimal value fo
 
 Might should compare convergence vs. $\Delta$
 
+IMPORTANT: I think since small $\Delta$ is good for RSAP but bad for getting a realistic posterior distribution (too peaked), we might should reframe the method as adaptive with smooth burn-in and just prove that the burn-in phase leads to ergodicity. Might have to manually change $\Delta$ at the end of the adaptive phase ($n_1+n_2$)
+
+
 \begin{figure}[!htb]
 \minipage{0.5\textwidth}
 	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_001D_00_AdaF.jpg}
