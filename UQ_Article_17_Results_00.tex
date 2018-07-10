@@ -43,7 +43,7 @@
 
 % REQUIRED
 \begin{abstract}
-Performing MCMC parameter estimation on complex, nonlinear mathematical models can quickly lead to endless searching through highly multimodal parameter spaces. If one does not know the optimal proposal distribution, the burn-in period can take an excessively long time, due to the Markov chain not properly mixing and becoming trapped near a suboptimal mode. Also, if the model of interest is very computationally expensive, one would prefer to evaluate it as few times as possible. With these challenges in mind, we present in this paper an adaptive Metropolis method RSAP (rejection-scaled adaptive proposal) which can grow and shrink the scale of the Gaussian proposal width (independently for each parameter) based on the number of consecutive rejections the chain has encountered. The method is flexible and robust enough to handle parameter spaces that are both high-dimensional and multimodal. %(and correlated???).   I don't think this is needed.
+Performing MCMC parameter estimation on complex, nonlinear mathematical models can quickly lead to endless searching through highly multimodal parameter spaces. If one does not know the optimal proposal distribution, the burn-in period can take an excessively long time, due to the Markov chain not properly mixing and becoming trapped near a suboptimal mode. Also, if the model of interest is very computationally expensive, one would prefer to evaluate it as few times as possible. With these challenges in mind, we present in this paper a new adaptive Metropolis method called RSAP (rejection-scaled adaptive proposal) which can grow and shrink the scale of the Gaussian proposal width (independently for each parameter) based on the number of consecutive rejections the chain has encountered. The method is flexible and robust enough to handle parameter spaces that are both high-dimensional and multimodal. %(and correlated???).   I don't think this is needed.
 It also solves the issue of the unknown optimal proposal width by adjusting it over time. We will provide a proof of its ergodicity and conclude with comprehensive computational results implementing this method on a number of benchmark optimization functions, comparing its convergence to that of the standard Metropolis method.
 \end{abstract}
 
@@ -267,7 +267,8 @@ Algorithm 2.1 provides a pseudocode representation of the method.
 	\ENDFOR
 \end{algorithmic}
 \caption{Rejection-scaled adaptive proposal (RSAP)}
-\end{algorithm}We use a uniform prior over the given domain and a diagonal covariance matrix $\hat \Sigma$ for our fixed Gaussian. We define $N$ as the number of time steps and $M$ as the number of parameters. We also define separate counters $k_{w}^m$, $k_{t}^m$ and scale factors $A_{w}^m$, $A_{t}^m$ for every parameter $m = 1, ..., M$. As can clearly be seen, steps 3-20 are the additional adaptive functionality while steps 21-23 are from the standard Metropolis method.
+\end{algorithm}
+We use a uniform prior over the given domain and a diagonal covariance matrix $\hat \Sigma$ for our fixed Gaussian. We define $N$ as the number of time steps and $M$ as the number of parameters. We also define separate counters $k_{w}^m$, $k_{t}^m$ and scale factors $A_{w}^m$, $A_{t}^m$ for every parameter $m = 1, ..., M$. As can clearly be seen, steps 3-20 are the additional adaptive functionality while steps 21-23 are from the standard Metropolis method.
 
 
 \subsection{Ergodicty of RSAP}
@@ -484,7 +485,42 @@ As can be seen, there is efficient mixing between the two modes in the region up
 \subsection{Convergence to global maximum}
 We now move on to present results from our optimization-inspired experiments. These used statistics from large ensembles of chains to provide a systematic way of comparing the short-term performance of RSAP and Metropolis over different proposal distributions. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP consistently outperforms Metropolis for most functions, dimensionalities, and proposal widths (confirm???).
 
-When performing this test, 
+When performing this test (Algorithm 3.1), we truncate the domain to the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals. For each width, we run $N_{chains}$ with initial states uniformly-distributed in the domain. These chains are then run for $N_{step}$ time-steps. The cumulative probability of convergence to the global maximum is then calculated over the time-steps for each width by determining at which time-step each chain's model error is below the threshold $\varepsilon$.
+\begin{algorithm}[h]
+\algsetup{
+	indent=12pt,
+	linenosize=\small,
+	linenodelimiter=.
+}
+\begin{algorithmic}[1]
+	\FOR{$i = 1$ \TO $N_{width}$}
+		\FOR{$j = 1$ \TO $N_{chain}$} % initialize chains
+			\STATE Initialize chains: $\theta_0^{i,j} \sim U([-L,L]^M)$
+			\STATE Perform Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i$
+		\ENDFOR
+		
+		\FOR{$j = 1$ \TO $N_{chain}$} % check for convergence
+			\STATE Initialize the cumulative distribution: $c^{i,j}_0 = 0$
+			\STATE Initialize convergence check: isConv = false
+			\FOR{$n = 1$ \TO $N_{step}$}
+				\IF{$f(\theta_n^{i,j}) \le \varepsilon$ \AND \NOT isConv}
+					\STATE $c^{i,j}_n = c^{i,j}_{n-1} + 1$
+					\STATE isConv = true
+				\ELSE
+					\STATE $c^{i,j}_n = c^{i,j}_{n-1}$
+				\ENDIF
+			\ENDFOR
+		\ENDFOR
+	\ENDFOR
+	\STATE Normalize $c$ by dividing all entries by $N_{chain}$
+\end{algorithmic}
+\caption{Test for convergence to global max}
+\end{algorithm}
+
+
+
+
+
 
 Obviously, since RSAP adapts the proposal width, we will be altering the \textit{fixed} proposal width, letting these values also be the widths for Metropolis. Regarding the chain ensembles used to get the cumulative probability of convergence, we uniformly randomly distribute the initial state of a large number of chains in the (square) search domain. We then mark the time step at which they are within some error tolerance of the global minimum. This threshold changes depending on the scale of the problem so that each function is compared on equal footing.
 
@@ -499,6 +535,8 @@ IMPORTANT: I think since small $\Delta$ is good for RSAP but bad for getting a r
 nDim 3,10,30,100
 
 no Rosenbrock
+
+Plot discussion: Since the width between adjacent modes in the Ackley function is 1, a proposal width of 0.333 or less will draw samples between the modes 99.7\% or more of the time ($3\sigma$)
 
 \begin{figure}[!htb]
 \minipage{0.5\textwidth}
