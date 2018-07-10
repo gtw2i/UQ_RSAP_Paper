@@ -300,7 +300,7 @@ where
 		\end{array}
 	\right.
 \end{equation}
-with their respective acceptance probabilities $a^n_{(j_1,i_1), \cdots, (j_M,i_M)} = \alpha(\theta'_{n+1}|\theta_n)$ where $m=1,...,M$ and $\theta'_{n+1}$ was drawn from the elemental proposal described by the subscripts. We let $n$ be the time step, the $i_m$'s be the adaptation degrees, and the $j_m$'s be switches that determine to which mode of adaptation the $i_m$'s are applied (1 = thin, 2 = fixed, 3 = wide). Note that $n$ and $i_m$ are non-negative integers such that $n \ge i_m$ since, in practice, the degree of adaptation cannot exceed the number of time steps which have occured. For the sake of space limitations in this paper, we will also define the rejection probability $r^n_{(j_1,i_1), \cdots, (j_M,i_M)} = 1- a^n_{(j_1,i_1), \cdots, (j_M,i_M)}$.
+with their respective \textit{acceptance probabilities} $a^n_{(j_1,i_1), \cdots, (j_M,i_M)} = \alpha(\theta'_{n+1}|\theta_n)$ where $m=1,...,M$ and $\theta'_{n+1}$ was drawn from the elemental proposal described by the subscripts. We let $n$ be the time step, the $i_m$'s be the adaptation degrees, and the $j_m$'s be switches that determine to which mode of adaptation the $i_m$'s are applied (1 = thin, 2 = fixed, 3 = wide). Note that $n$ and $i_m$ are non-negative integers such that $n \ge i_m$ since, in practice, the degree of adaptation cannot exceed the number of time steps which have occured. For the sake of space limitations in this paper, we will also define the \textit{rejection probabilities} $r^n_{(j_1,i_1), \cdots, (j_M,i_M)} = 1- a^n_{(j_1,i_1), \cdots, (j_M,i_M)}$.
 
 Next, define the following linear combinations as the \textit{adaptive proposals}
 \begin{equation}
@@ -370,18 +370,18 @@ with normalization
 where $m = 1, \cdots, M$. We can construct several recurrence relations which describe how the values of the coefficients $c^n$ change over time. We get one relation which governs the evolution of the coefficient corresponding to the proposal which has zero total adaptation degree and another which governs all the rest.
 \begin{equation}
 	\begin{split}
-		c^{n+1}_{0,0,0, \cdots, 0,0,0} = & \hspace{3pt} \sum^n_{\ell=0} \Bigg(\sum_{i^1_m+i^2_m+i^3_m=\ell} b^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} c^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}
+		c^{n+1}_{0,0,0, \cdots, 0,0,0} = & \hspace{3pt} \sum^n_{\ell=0} \sum_{i^1_m+i^2_m+i^3_m=\ell} \Big( b^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} \Big) \Big( c^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} \Big)
 		\\
-		c^{n+1}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = & \hspace{3pt} \sum_{j_1 \mid i^{j_1}_1 \ge 1} \cdots \sum_{j_M \mid i^{j_M}_M \ge 1} \Big( r^n_{(j_1,i^{j_1}_1), \cdots, (j_M,i^{j_M}_M)} \Big) \Big( p^n_{j_1} \cdots p^n_{j_M} \Big) \cdot
+		c^{n+1}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = & \hspace{3pt} \sum_{j_1 \mid i^{j_1}_1 \ge 1} \cdots \sum_{j_M \mid i^{j_M}_M \ge 1} \Big( r^n_{(j_1,i^{j_1}_1), \cdots, (j_M,i^{j_M}_M)} \Big) \Big( p^n_{j_1} \cdots p^n_{j_M} \Big) \times
 		\\
-		& \hspace{3pt} c^{n}_{i^1_1, \cdots, i^{j_1}_1-1, \cdots, i^3_1, \cdots, i^1_M, \cdots, i^{j_M}_M-1, \cdots, i^3_M}
+		& \hspace{3pt} \Big( c^{n}_{i^1_1, \cdots, i^{j_1}_1-1, \cdots, i^3_1, \cdots, i^1_M, \cdots, i^{j_M}_M-1, \cdots, i^3_M} \Big)
 	\end{split}
 \end{equation}
-The first relation is fairly basic, as it simply was derived from the fact that the adaptation-less proposal will be used at any step which immediately follows an acceptance. Consequently, it finds the total, weighted acceptance probability given all possible proposals which could be used at that step. This is equal to the probability that the adaptation-less proposal will be chosen at the following step. The second relation is more complicated. From a top level perspective, it finds the total, weighted inflowing probability from all proposals which could possibly precede the proposal under consideration. More specifically, it does this by summing the rejection probabilities over all valid permutations of subtracting one from the three types adaptation degrees for all $M$ parameters (of which there are no more than $3^M$ permutations). By valid, we mean that subtracting one does not give a negative adaptation degree (thus the $\ge 1$ under the sums).
+The first relation is fairly basic, as it simply was derived from the fact that the adaptation-less proposal will be used at any step which immediately follows an acceptance. Consequently, it finds the total, weighted acceptance probability given all possible proposals which could be used at that step. This is equal to the probability that the adaptation-less proposal will be chosen at the following step. The second relation is more complicated. Conceptually, it finds the total, weighted rejection probability from all proposals which could possibly precede the proposal under consideration. More specifically, it does this by summing the weighted rejection probabilities over all valid permutations of subtracting one from the three types adaptation degrees for all $M$ parameters (of which there are no more than $3^M$ permutations). A permutation is considered valid when subtracting one does not give a negative adaptation degree (thus the $i^{j_m}_m \ge 1$ under the sums).
 
 % is it confusing which time step is being referred to as current/previous?
 
-Now, to prove diminishing adaptation, we will show that the values of $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$ will vanish as $n \rightarrow \infty$ for any proposals that have at least one degree of either thinning or widening adaptation in at least one parameter. We will use induction on the thinning and widening adaptation degrees to prove this.
+Now, to prove diminishing adaptation, we will show that the values of $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$ vanish as $n \rightarrow \infty$ for any proposals that have at least one degree of either thinning or widening adaptation in at least one parameter. We will use induction on the thinning and widening adaptation degrees to prove this.
 
 Let us first prove the base case, where we consider a proposal such that each parameter has only one adaptation degree assigned and there exists at least parameter such that its mode of adaptation is either thinning or widening. Without loss of generality, we will say that this is the first parameter and that thinning was chosen (the widening case is identical). Letting $c^{n}_{1, 0, 0, \cdots, j^1_M, j^2_M, j^3_M}$ be the coefficient of this proposal, this implies that either $j^1_m=1$ or $j_m^3=1$ for every $m = 2, \cdots, M$. Then, using the recurrence relation, we get
 \begin{equation}
@@ -478,7 +478,7 @@ where $a = 0.5, b = 0.333, c = 0.15, d = 8, x \in [-1, 1]$. The initial state va
 \endminipage
 \caption{Plots of the bimodal function, chain trace, and binned posterior estimate resulting from an RSAP run with 5,000 steps.}
 \end{figure}
-As can be seen, there is efficient mixing between the two modes in the region up until $n = n_1$. Once standard Metropolis begins to overtake the adaptive effects, the chain becomes stuck in whichever mode it was currently in.    THE COVERAGE OF THESE TWO STATES WILL BECOME EQUAL ASYMPTOTICALLY, BUT FOR A SMALL NUMBER OF STEPS, IT IS LIKELY TO RESULT IN UNEQUAL SAMPLING IN THIS FUNCTION....  JW
+As can be seen, there is efficient mixing between the two modes in the region up until $n = n_1$. Once standard Metropolis begins to overtake the adaptive effects, the chain becomes ``stuck" in whichever mode it was currently in. The miving between the two modes WILL BECOME EQUAL ASYMPTOTICALLY, BUT FOR A SMALL NUMBER OF STEPS, IT IS LIKELY TO RESULT IN UNEQUAL SAMPLING IN THIS FUNCTION...  JW
 
 Distributions???
 
@@ -500,45 +500,6 @@ Might should compare convergence vs. $\Delta$
 IMPORTANT: I think since small $\Delta$ is good for RSAP but bad for getting a realistic posterior distribution (too peaked), we might should reframe the method as adaptive with smooth burn-in and just prove that the burn-in phase leads to ergodicity. Might have to manually change $\Delta$ at the end of the adaptive phase ($n_1+n_2$)
 
 
-\begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_001D_00_AdaF.jpg}
-\endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_001D_00_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Gaussian. 100 steps per chain, 500 chains per width value, threshold of 0.003.}
-\end{figure}
-
-\begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_003D_00_AdaF.jpg}
-\endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Gaussian_003D_00_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 3D Gaussian. 500 steps per chain, 1000 chains per width value, threshold of 0.003. Note the different vertical axis scale.}
-\end{figure}
-
-\begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_00_AdaF.jpg}
-\endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_00_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Ackley function. 150 steps per chain, 1000 chains per width value, threshold of 0.8.}
-\end{figure}
-
-\begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_01_AdaF.jpg}
-\endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_001D_01_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 1D Ackley function. 150 steps per chain, 1000 chains per width value, threshold of 0.8.}
-\end{figure}
 
 \begin{figure}[!htb]
 \minipage{0.5\textwidth}
