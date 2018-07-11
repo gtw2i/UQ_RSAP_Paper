@@ -483,7 +483,7 @@ where $a = 0.5, b = 0.15, c = 0.333, d = 8, \theta \in [-1, 1]$. The initial sta
 As can be seen, there is efficient mixing between the two modes in the region up until $n = n_1$. Once standard Metropolis begins to overtake the adaptive effects, the chain becomes ``stuck" in whichever mode it was currently in. The miving between the two modes WILL BECOME EQUAL ASYMPTOTICALLY, BUT FOR A SMALL NUMBER OF STEPS, IT IS LIKELY TO RESULT IN UNEQUAL SAMPLING IN THIS FUNCTION...  JW Obviously, however, this test can be easily skewwed by choosing method parameters which work well for RSAP but poor for Metropolis. The tests in the next section provide a fairer comparison, letting us examine the optimal performance of both methods.
 
 
-\subsection{Convergence to global maximum}
+\subsection{Convergence to global minimum}
 We now move on to present results from our optimization-inspired experiments. These used statistics from large ensembles of chains to provide a systematic way of comparing the short-term (i.e., burn-in) performance of RSAP and Metropolis over different proposal distributions. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of proposal widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP outperforms Metropolis for most functions, dimensionalities, and proposal widths (confirm???).
 
 When performing this test (see Algorithm 3.1), we used $M$-dimensional Ackley functions
@@ -500,13 +500,14 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 \begin{algorithmic}[1]
 	\FOR{$i = 1$ \TO $N_{width}$}
 		\FOR{$j = 1$ \TO $N_{chain}$} % initialize chains
-<<<<<<< HEAD
+%<<<<<<< HEAD
+
+%			\STATE Initialize chain: $\theta_0^{i,j} \sim U([-L,L]^M)$
+%			\STATE Perform Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i$
+%=======
 			\STATE Initialize chain: $\theta_0^{i,j} \sim U([-L,L]^M)$
-			\STATE Perform Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i$
-=======
-			\STATE Initialize chains: $\theta_0^{i,j} \sim U([-L,L]^M)$
-			\STATE Calculate  $\theta_n^{i,j}$ for all n steps in the chain using both Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i = \sigma_i * I$
->>>>>>> b5fcbc9db7f719088b01834d947fbf38cd06bd54
+			\STATE Calculate $\theta_n^{i,j}$ for $n = 1, ..., N_{step}$ steps using either Metropolis or RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i = \sigma^i I$
+%>>>>>>> b5fcbc9db7f719088b01834d947fbf38cd06bd54
 		\ENDFOR
 
 		\STATE Initialize the cumulative distribution: $c^i_0 = 0$ 
