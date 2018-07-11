@@ -426,9 +426,9 @@ https://python-graph-gallery.com/111-custom-correlogram/
 
 To begin our analysis, we will provide trace plots of one-parameter chains created by RSAP for the test functions under consideration, as well as plots of the functions used and sample-binned approximations of the posterior distribution. We will start with the 1D Gaussian defined by
 \begin{equation}
-	f(x) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \dfrac{x^2}{b^2}) \Big)
+	f(\theta) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \dfrac{\theta^2}{b^2}) \Big)
 \end{equation}
-where $a = 1, b = 0.3, x \in [-1, 1]$. The initial state values were set to $x_0 = 0.8, \Delta_0 = 0.08$ and the fixed proposal widths were set to $\sigma_x = 0.1, \sigma_\Delta = 0.0008$. As discussed above, the parameters for RSAP were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
+where $a = 1, b = 0.3, \theta \in [-1, 1]$. The initial state values were set to $\theta_0 = 0.8, \Delta_0 = 0.08$ and the fixed proposal widths were set to $\sigma_\theta = 0.1, \sigma_\Delta = 0.0008$. As discussed above, the parameters for RSAP were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
 \begin{figure}[!htb]
 \minipage{0.33\textwidth}
 	\includegraphics[width=\linewidth]{UQPlot_Gaussian_00_Function.jpg}
@@ -445,9 +445,9 @@ The Gaussian is such a simple function that there is no need to use adaptation o
 
 Next, we have an Ackley function in 1D defined by
 \begin{equation}
-	f(x) = a \Big( 1 - \textrm{exp}(- 0.2 \sqrt{x^2/c}) \Big) + b \Big( e - \textrm{exp}(\textrm{cos}(2 \pi x)/c) \Big)
+	f(\theta) = a \Big( 1 - \textrm{exp}(- 0.2 \sqrt{\theta^2/c}) \Big) + b \Big( e - \textrm{exp}(\textrm{cos}(2 \pi \theta)/c) \Big)
 \end{equation}
-where $a = 20, b = 4, c = 1, x \in [-10, 10]$. The initial state values were set to $x_0 = 8, \Delta_0 = 3.5$ and the fixed proposal widths were set to $\sigma_x = 1.0, \sigma_\Delta = 0.01$. The RSAP parameters again were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
+where $a = 20, b = 4, c = 1, \theta \in [-10, 10]$. The initial state values were set to $\theta_0 = 8, \Delta_0 = 3.5$ and the fixed proposal widths were set to $\sigma_\theta = 1.0, \sigma_\Delta = 0.01$. The RSAP parameters again were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
 \begin{figure}[!htb]
 \minipage{0.33\textwidth}
 	\includegraphics[width=\linewidth]{UQPlot_Ackley_00_Function.jpg}
@@ -464,9 +464,9 @@ It is very easy to see from the trace and posterior plots that RSAP efficiently 
 
 Lastly, we have a rather illustrative example of the superiority of RSAP to standard Metropolis in the form of a bi-modal function defined by
 \begin{equation}
-	f(x) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(x-c)^2}{b^2} \Big)^{d/2} ) \Big) + a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(x+c)^2}{b^2} \Big)^{d/2} ) \Big)
+	f(\theta) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(\theta-c)^2}{b^2} \Big)^{d/2} ) \Big) + a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(\theta+c)^2}{b^2} \Big)^{d/2} ) \Big)
 \end{equation}
-where $a = 0.5, b = 0.15, c = 0.333, d = 8, x \in [-1, 1]$. The initial state values were set to $x_0 = 0.8, \Delta_0 = 0.08$ and the fixed proposal widths were set to $\sigma_x = 0.1, \sigma_\Delta = 0.0008$. As discussed above, the parameters for RSAP were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
+where $a = 0.5, b = 0.15, c = 0.333, d = 8, \theta \in [-1, 1]$. The initial state values were set to $\theta_0 = 0.8, \Delta_0 = 0.08$ and the fixed proposal widths were set to $\sigma_\theta = 0.1, \sigma_\Delta = 0.0008$. As discussed above, the parameters for RSAP were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
 \begin{figure}[!htb]
 \minipage{0.33\textwidth}
 	\includegraphics[width=\linewidth]{UQPlot_Bimodal_00_Function.jpg}
@@ -487,7 +487,7 @@ We now move on to present results from our optimization-inspired experiments. Th
 
 When performing this test (see Algorithm 3.1), we used $M$-dimensional Ackley functions
 \begin{equation}
-	f(x) = \bigg( 20 - 20 \textrm{exp}\bigg( -0.2 \Big( \sum_{n=1}^{M} x_n^2/M \Big)^{0.5} \bigg) \bigg) + \bigg( e - \textrm{exp}\bigg( \sum_{n=1}^{M} \textrm{cos}(2 \pi x_n)/M \bigg) \bigg)
+	f(\theta) = 20 \bigg( 1 - \textrm{exp}\bigg( -0.2 \Big( \dfrac{1}{M} \sum_{m=1}^{M} \theta_m^2 \Big)^{0.5} \bigg) \bigg) + \bigg( e - \textrm{exp}\bigg( \dfrac{1}{M} \sum_{m=1}^{M} \textrm{cos}(2 \pi \theta_m) \bigg) \bigg)
 \end{equation}
 over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals. We say widths rather than covariance matrices since because the Ackley function is isotropic along the parameter axes, there is no need for differing widths for each parameter. For each width, we run $N_{chains}$, each for $N_{steps}$, with initial states uniformly-distributed in the domain. The cumulative probability of convergence to the global maximum is then calculated over the time-steps for each width by determining at which time-step each chain's model error is below the threshold $\varepsilon$.
 \begin{algorithm}[h]
@@ -499,7 +499,7 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 \begin{algorithmic}[1]
 	\FOR{$i = 1$ \TO $N_{width}$}
 		\FOR{$j = 1$ \TO $N_{chain}$} % initialize chains
-			\STATE Initialize chains: $\theta_0^{i,j} \sim U([-L,L]^M)$
+			\STATE Initialize chain: $\theta_0^{i,j} \sim U([-L,L]^M)$
 			\STATE Perform Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i$
 		\ENDFOR
 
