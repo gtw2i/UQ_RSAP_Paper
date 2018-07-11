@@ -44,7 +44,7 @@
 % REQUIRED
 \begin{abstract}
 Performing MCMC parameter estimation on complex, nonlinear mathematical models can quickly lead to endless searching through highly multimodal parameter spaces. If one does not know the optimal proposal distribution, the burn-in period can take an excessively long time, due to the Markov chain not properly mixing and becoming trapped near a suboptimal mode. Also, if the model of interest is very computationally expensive, one would prefer to evaluate it as few times as possible. With these challenges in mind, we present in this paper a new adaptive Metropolis method called RSAP (rejection-scaled adaptive proposal) which can grow and shrink the scale of the Gaussian proposal width (independently for each parameter) based on the number of consecutive rejections the chain has encountered. The method is flexible and robust enough to handle parameter spaces that are both high-dimensional and multimodal. %(and correlated???).   I don't think this is needed.
-It also solves the issue of the unknown optimal proposal width by adjusting it over time. We will provide a proof of its ergodicity and conclude with comprehensive computational results implementing this method on a number of benchmark optimization functions, comparing its convergence to that of the standard Metropolis method.
+It also solves the issue of the unknown optimal proposal width by adjusting it over time. We will provide a proof of its ergodicity and conclude with comprehensive computational results implementing this method on several benchmark optimization functions, comparing its convergence to that of the standard Metropolis method.
 \end{abstract}
 
 % REQUIRED
@@ -62,7 +62,7 @@ Markov chain Monte Carlo, adaptive methods, parameter estimation
 \section{Introduction}
 Markov chain Monte Carlo (MCMC) methods provide one of the most widely-used and easily accessible solution techniques to the problem of model parameter estimation (PE). As the name suggests, MCMC algorithms use Markov chains to sample the state space of the model being studied, thus obtaining distributions for all of its relevant parameters. With an ever-growing number of MCMC method types---from interacting forests of chains to delayed rejection techniques which approximate a full model evaluation---a suitable method can be found for virtually every problem.
 
-This paper is outlined in the following way. First, we open with a review of the original Metropolis method, as well as some general notes on how kernel mixing and adaptive methods are able to increase its performance. Next, we will discuss our own adaptive kernel mixing method RSAP and the motivating factors for using it, as well as provide a proof of its ergodicity. Lastly, we will present and interpret results of experiments performed on our method using common optimization benchmark functions (including Gaussian, Rosenbrock, and Ackley functions) in several different dimensionalities, going into detail in comparing our method's performance with that of standard Metropolis over a range of proposal widths.
+This paper is outlined in the following way. First, we open with a review of the original Metropolis method, as well as some general notes on how kernel mixing and adaptive methods are able to increase its performance. Next, we will discuss our own adaptive kernel mixing method RSAP and the motivating factors for using it, as well as provide a proof of its ergodicity. Lastly, we will present and interpret results of experiments performed on our method using common optimization benchmark functions (including Gaussian and Ackley functions as well as a flattened bi-modal function) in several different dimensionalities, going into detail in comparing our method's performance with that of standard Metropolis over a range of proposal widths.
 
 
 \subsection{Metropolis}
@@ -395,11 +395,11 @@ We will now prove the induction step, which states that if any coefficient with 
 
 \section{Computational testing}
 Having proven the %analytical integrity 
-convergence of our method, we now move on to demonstrate its practical utility through the presentation of numerous computational results. These cover multiple different aspects of the method's performance, including flexibility/robustness, mixing efficiency, and rate of convergence. We also present results from a new optimization-style test we developed in which we find the cumulative probability distribution for convergence of the chain to the global minimum of the test function, versus both an interval of initial states (1D only) and a range of fixed proposal widths (1D-MD???). This technique provides easy-to-interpret results which are numerically \textit{and} visually simple to compare.
+convergence of our method, we now move on to demonstrate its practical utility through the presentation of numerous computational results. These cover multiple different aspects of the method's performance, including flexibility/robustness, mixing efficiency, and rate of convergence. We also present results from a new optimization-style test we developed in which we find the cumulative probability distribution for convergence of the chain to the global minimum of the test function versus a range of fixed proposal widths. This technique provides easy-to-interpret results which are numerically \textit{and} visually simple to compare.
 
 
 \subsection{Discussion of RSAP parameters values used in testing}
-When performing numerical experiments on our method, we used standard optimization test functions (including Gaussians, Rosenbrock functions, and Ackley functions), each with a global minimum of $y = f(\theta^*) = 0$ (with the exception of the bi-modal function). As such, the likelihood function can be expressed as
+When performing numerical experiments on our method, we used standard optimization test functions, each with a global minimum of $y = f(\theta^*) = 0$ (the bi-modal function has two adjacent minima). As such, the likelihood function can be expressed as
 \begin{equation}
 	\begin{split}
 		\ell(y|\theta) & \propto \textrm{exp}(-\dfrac{1}{2} \dfrac{(y-(f(\theta)+\epsilon))^2}{\Delta^2})\\
@@ -408,7 +408,7 @@ When performing numerical experiments on our method, we used standard optimizati
 \end{equation}
 where $\epsilon$ is an error term which we include in some of the tests below. The value of $\Delta$ affects the ease of acceptance, and thus the relative peakedness of the resulting sample-binned approximation of the posterior. Not knowing its proper value, we include it as a parameter for RSAP to estimate, though we set its proposal width quite low so that it does not change too rapidly, dramatically altering the acceptance rate.
 
-There is also the matter of setting the adaptation parameters to their proper values. Clearly, the optimal values of these parameters are problem-dependent; so we attempted to find a set of reasonable values which improved the performance gain over Metropolis for as many test cases as possible. We thus arrived at maximum scaling magnitudes of $\hat A_{t} = 0.1, \hat A_{w} = 10$, respectively. Being able to both increase and decrease the propsal width by an order of magnitude ensures that the true optimal width is likely contained within the interval $[\hat A_t \sigma_f, \hat A_w \sigma_f]$. Next, concerning the scaling rates, we found that their values were less significant than the magnitudes in determining performance gain. Their values were set to $r_{t} = r_{w} = 0.3$, since this puts the scaling to within approximately 5\% of its maximum effect within 10 rejection steps ($e^{-0.3 \cdot 10} \approx 0.049$). Any longer would take too long to reach maximum scaling and frequent acceptances would leave the more extreme scaling values unused. Lastly, the probability scaling intervals $n_1, n_2$ are likely the most problem-dependent parameters since they determine how long RSAP is allowed to be adaptive. As discussed earlier, $n_1 < N$ should be large w.r.t. $N$ while $n_2 \leq N - n_1$ has more freedom. Because of their problem dependence, we will vary them throughout the tests.
+There is also the matter of setting the adaptation parameters to their proper values. Clearly, the optimal values of these parameters are problem-dependent; so we attempted to find a set of reasonable values which improved the performance gain over Metropolis for as many test cases as possible. We thus arrived at maximum scaling magnitudes of $\hat A_{t} = 0.1, \hat A_{w} = 10$, respectively. Being able to both increase and decrease the proposal width by an order of magnitude ensures that the true optimal width is likely contained within the interval $[\hat A_t \sigma_f, \hat A_w \sigma_f]$. Next, concerning the scaling rates, we found that their values were less significant than the magnitudes in determining performance gain. Their values were set to $r_{t} = r_{w} = 0.3$, since this puts the scaling to within approximately 5\% of its maximum effect within 10 rejection steps ($e^{-0.3 \cdot 10} \approx 0.049$). Any longer would take too long to reach maximum scaling and frequent acceptances would leave the more extreme scaling values unused. Lastly, the probability scaling intervals $n_1, n_2$ are likely the most problem-dependent parameters since they determine how long RSAP is allowed to be adaptive. As discussed earlier, $n_1 < N$ should be large w.r.t. $N$ while $n_2 \leq N - n_1$ has more freedom. Because of their problem dependence, we will vary them throughout the tests.
 
 WHY did we use these test functions? Cite Ackley, Rosenbrock, others. Justify usage.
 
@@ -466,7 +466,7 @@ Lastly, we have a rather illustrative example of the superiority of RSAP to stan
 \begin{equation}
 	f(x) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(x-c)^2}{b^2} \Big)^{d/2} ) \Big) + a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(x+c)^2}{b^2} \Big)^{d/2} ) \Big)
 \end{equation}
-where $a = 0.5, b = 0.333, c = 0.15, d = 8, x \in [-1, 1]$. The initial state values were set to $x_0 = 0.8, \Delta_0 = 0.08$ and the fixed proposal widths were set to $\sigma_x = 0.1, \sigma_\Delta = 0.0008$. As discussed above, the parameters for RSAP were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
+where $a = 0.5, b = 0.15, c = 0.333, d = 8, x \in [-1, 1]$. The initial state values were set to $x_0 = 0.8, \Delta_0 = 0.08$ and the fixed proposal widths were set to $\sigma_x = 0.1, \sigma_\Delta = 0.0008$. As discussed above, the parameters for RSAP were set to $\hat A_{t} = 0.1, \hat A_{w} = 10, r_{t} = 0.3, r_{w} = 0.3, n_1 = 2000, n_2 = 1000$.
 \begin{figure}[!htb]
 \minipage{0.33\textwidth}
 	\includegraphics[width=\linewidth]{UQPlot_Bimodal_00_Function.jpg}
@@ -483,9 +483,13 @@ As can be seen, there is efficient mixing between the two modes in the region up
 
 
 \subsection{Convergence to global maximum}
-We now move on to present results from our optimization-inspired experiments. These used statistics from large ensembles of chains to provide a systematic way of comparing the short-term performance of RSAP and Metropolis over different proposal distributions. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP consistently outperforms Metropolis for most functions, dimensionalities, and proposal widths (confirm???).
+We now move on to present results from our optimization-inspired experiments. These used statistics from large ensembles of chains to provide a systematic way of comparing the short-term (i.e., burn-in) performance of RSAP and Metropolis over different proposal distributions. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP consistently outperforms Metropolis for most functions, dimensionalities, and proposal widths (confirm???).
 
-When performing this test (Algorithm 3.1), we truncate the domain to the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals. For each width, we run $N_{chains}$ with initial states uniformly-distributed in the domain. These chains are then run for $N_{step}$ time-steps. The cumulative probability of convergence to the global maximum is then calculated over the time-steps for each width by determining at which time-step each chain's model error is below the threshold $\varepsilon$.
+When performing this test (see Algorithm 3.1), we used $M$-dimensional Ackley functions
+\begin{equation}
+	f(x) = \bigg( 20 - 20 \textrm{exp}\bigg( -0.2 \Big( \sum_{n=1}^{M} x_n^2/M \Big)^{0.5} \bigg) \bigg) + \bigg( e - \textrm{exp}\bigg( \sum_{n=1}^{M} \textrm{cos}(2 \pi x_n)/M \bigg) \bigg)
+\end{equation}
+over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals. We say widths rather than covariance matrices since because the Ackley function is isotropic along the parameter axes, there is no need for differing widths for each parameter. For each width, we run $N_{chains}$, each for $N_{steps}$, with initial states uniformly-distributed in the domain. The cumulative probability of convergence to the global maximum is then calculated over the time-steps for each width by determining at which time-step each chain's model error is below the threshold $\varepsilon$.
 \begin{algorithm}[h]
 \algsetup{
 	indent=12pt,
@@ -498,16 +502,16 @@ When performing this test (Algorithm 3.1), we truncate the domain to the $M$-dim
 			\STATE Initialize chains: $\theta_0^{i,j} \sim U([-L,L]^M)$
 			\STATE Perform Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i$
 		\ENDFOR
-		
+
+		\STATE Initialize the cumulative distribution: $c^i_0 = 0$		
 		\FOR{$j = 1$ \TO $N_{chain}$} % check for convergence
-			\STATE Initialize the cumulative distribution: $c^{i,j}_0 = 0$
 			\STATE Initialize convergence check: isConv = false
 			\FOR{$n = 1$ \TO $N_{step}$}
-				\IF{$f(\theta_n^{i,j}) \le \varepsilon$ \AND \NOT isConv}
-					\STATE $c^{i,j}_n = c^{i,j}_{n-1} + 1$
+				\IF{\NOT isConv \AND $f(\theta_n^{i,j}) \le \varepsilon$}
+					\STATE $c^i_n = c^i_{n-1} + 1$
 					\STATE isConv = true
 				\ELSE
-					\STATE $c^{i,j}_n = c^{i,j}_{n-1}$
+					\STATE $c^i_n = c^i_{n-1}$
 				\ENDIF
 			\ENDFOR
 		\ENDFOR
