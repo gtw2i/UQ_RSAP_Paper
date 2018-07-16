@@ -419,12 +419,10 @@ UPDATE RSAP Workflow
 
 REDO trace plots and things
 
+FIX plots with x as axis label
 
 \subsection{Chain mixing}
-x
-
-https://python-graph-gallery.com/111-custom-correlogram/
-
+% https://python-graph-gallery.com/111-custom-correlogram/
 To begin our analysis, we will provide trace plots of one-parameter chains created by RSAP for the test functions under consideration, as well as plots of the functions used and sample-binned approximations of the posterior distribution. We will start with the 1D Gaussian defined by
 \begin{equation}
 	f(\theta) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \dfrac{\theta^2}{b^2}) \Big)
@@ -531,17 +529,13 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 \caption{Test for convergence to global max}
 \end{algorithm}
 
-Two more considerations before presenting the results. Sinc ewe are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but poor for getting accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, for each test, we will include results using several different values of $\Delta$ so that its effect can be clearly seen.
-
-% IMPORTANT: I think since small $\Delta$ is good for RSAP but bad for getting a realistic posterior distribution (too peaked), we might should reframe the method as adaptive with smooth burn-in and just prove that the burn-in phase leads to ergodicity. Might have to manually change $\Delta$ at the end of the adaptive phase ($n_1+n_2$)
+Let us note two more considerations before presenting the results. Since we are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing us in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but poor for getting accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, for the first test, we will include results using several different values of $\Delta$ so that its effect can be clearly seen, after which---for the sake of simplicity---we will restrict ourselves to only small values of $\Delta$.
 
 % nDim: 3, 10, 30, 100
 % no Rosenbrock
 
 Now, let us examine the results of our numerical tests.
-
-Plot discussion: Since the width between adjacent modes in the Ackley function is 1, a proposal width of 0.333 or less will draw samples between the modes 99.7\% or more of the time ($3\sigma$)
-
+% 3D
 \begin{figure}[!htb]
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg}
@@ -566,8 +560,25 @@ Plot discussion: Since the width between adjacent modes in the Ackley function i
 \endminipage\hfill
 \caption{Plots of the cumulative convergence of Metropolis (left column), RSAP (center column), and their difference (right column) performed on a 3D Ackley function. We used $\Delta = 0.01$ (top row), $\Delta = 1.0$ (center row), and $\Delta = 2.0$ (bottom row). We also used 500 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^3$.}
 \end{figure}
+Figure 5 contains the results of a comparison between RSAP and Metropolis on a 3D Ackley function. There are several features which must be discussed, most immediately apparent of which is RSAP's superior rate of convergence to the global minimum. Not only does it outperform Metropolis's most optimal proposal width (roughly 0.6-0.8); it also converges even if it has too small or large of a width for Metropolis to converge at all within the prescribed time frame.  Considering just small width values, it is reasonable for Metropolis to stagnate on the Ackley function if given too small a width. Each trough in the Ackley function has a width of 1.0 between adjacent modes. This is due to the cos$(2 \pi \theta_m)$. Now, for a Gaussian distribution, 99.7\% of samples drawn will be within $3 \sigma$ of the mean. Therefore, letting $1.0 = 3 \sigma$, we get that a width of 0.333 will only draw samples outside of a particular trough 0.3\% of the time (assuming the mean is approximately at the center of the trough, which is reasonable since it will be drawn to that location). Looking back to Figure 5, we see no convergence in Metropolis for width values at or below 0.333. On the other hand, due to RSAP's ability to both grow and shrink the width, it still converges within this region. 
+
+It is also clear how significant the effect of changing the value of $\Delta$ can be, with a value of 0.01 (top row) performing notably superior to 2.0 (bottom row). For both methods, lower $\Delta$ will allow the chains to drift more easily into sub-optimal regions, thus slowing the burn-in process. As stated before, this problem is compounded for RSAP since it depends on rejections to operate effectively.
 
 
+Next in Figure 6, we have a comparison over a 10D Ackley function.
+\begin{figure}[!htb]
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $\Delta = 0.01$, 500 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^10$.}
+\end{figure}
+One will notice the scale of the axes has changed dramatically from Figure 5, since a 10D space requires more time-steps to explore and the optimal width decreases \cite{SigScale}. 
 
 
 \begin{comment}
@@ -617,6 +628,8 @@ together this example manuscript and supplement.
 \bibitem{AdaptReview} Gareth O. Roberts and Jeffrey S. Rosenthal (2012) Examples of Adaptive MCMC, Journal of Computational and Graphical Statistics, 18:2, 349-367, DOI: 10.1198/jcgs.2009.06134
 
 \bibitem{RRAdaptErgo} Gareth O. Roberts and Jeffrey S. Rosenthal. "Coupling and Ergodicity of Adaptive Markov Chain Monte Carlo Algorithms." \textit{Journal of Applied Probability}, Vol. 44, No. 2 (Jun., 2007), pp. 458-475
+
+\bibitem{SigScale} G. O. Roberts, A. Gelman, and W. R. Gilks (1997). Weak convergence and optimal scaling of random walk Metropolis algorithms. Ann. Appl. Probab. 7, 110-20.
 
 \bibitem{Interact} Liu Jing, Prahlad Vadakkepat. "Interacting MCMC particle filter for tracking maneuvering target." \textit{Digital Signal Processing.} Volume 20, Issue 2, 2010, Pages 561-574.
 
