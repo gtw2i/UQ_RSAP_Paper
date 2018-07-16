@@ -480,17 +480,19 @@ where $a = 0.5, b = 0.15, c = 0.333, d = 8, \theta \in [-1, 1]$. The initial sta
 \endminipage
 \caption{Plots of the bimodal function, chain trace, and binned posterior estimate resulting from an RSAP run with 5,000 steps.}
 \end{figure}
-As can be seen, there is efficient mixing between the two modes in the region up until $n = n_1$. Once standard Metropolis begins to overtake the adaptive effects, the chain becomes ``stuck" in whichever mode it was currently in. The miving between the two modes WILL BECOME EQUAL ASYMPTOTICALLY, BUT FOR A SMALL NUMBER OF STEPS, IT IS LIKELY TO RESULT IN UNEQUAL SAMPLING IN THIS FUNCTION...  JW Obviously, however, this test can be easily skewwed by choosing method parameters which work well for RSAP but poor for Metropolis. The tests in the next section provide a fairer comparison, letting us examine the optimal performance of both methods.
+As can be seen, there is efficient mixing between the two modes in the region up until $n = n_1$; however, once standard Metropolis begins to overtake the adaptive effects, the chain becomes temporarily ``stuck" in whichever mode it was currently in. In the infinite limit, the mixing between the two modes will equalize, but the use of a small number of steps will result in biased sampling of one mode.
+
+Obviously, this test can be easily skewwed by choosing method parameters which work well for RSAP but poor for Metropolis. The tests in the next section provide a fairer comparison, letting us examine the optimal performance of both methods.
 
 
 \subsection{Convergence to global minimum}
-We now move on to present results from our optimization-inspired experiments. These used statistics from large ensembles of chains to provide a systematic way of comparing the short-term (i.e., burn-in) performance of RSAP and Metropolis over different proposal distributions. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of proposal widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP outperforms Metropolis for most functions, dimensionalities, and proposal widths (confirm???).
+We now move on to present results from our optimization-inspired experiments. These use statistics from large ensembles of chains to provide a systematic way of comparing the short-term (i.e., burn-in) performance of RSAP and Metropolis over different proposal widths. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of proposal widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP outperforms Metropolis for most functions (only doing Ackley now), dimensionalities, and proposal widths (confirm???).
 
 When performing this test (see Algorithm 3.1), we used $M$-dimensional Ackley functions
 \begin{equation}
 	f(\theta) = 20 \bigg( 1 - \textrm{exp}\bigg( -0.2 \Big( \dfrac{1}{M} \sum_{m=1}^{M} \theta_m^2 \Big)^{0.5} \bigg) \bigg) + \bigg( e - \textrm{exp}\bigg( \dfrac{1}{M} \sum_{m=1}^{M} \textrm{cos}(2 \pi \theta_m) \bigg) \bigg)
 \end{equation}
-over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals.  Obviously, since RSAP adapts the proposal width, we will be altering the \textit{fixed} proposal width, letting these values also be the widths for Metropolis.  We say widths rather than covariance matrices since because the Ackley function is isotropic along the parameter axes, there is no need for differing widths for each parameter. For each width, we run $N_{chains}$, each for $N_{steps}$, with initial states that are uniformly-distributed across the domain. The cumulative probability of convergence to the global maximum is then calculated over the time-steps for each width by determining at which time-step each chain's model error is below the threshold $\varepsilon$.
+over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals.  Obviously, since RSAP adapts the proposal width, we will be altering the \textit{fixed} proposal width, letting these values also be the widths for Metropolis.  We say ``widths" rather than ``covariance matrices" since---for the Ackley function---each parameter axis is scaled equally, thus causing a single width to work for each. For every width, we run $N_{chains}$, each for $N_{steps}$, with initial states that are uniformly-distributed across the cubical domain. The cumulative probability of convergence to the global minimum of the Ackely function is then calculated over the time-steps for each width by determining at which time-step each chain's Ackley evaluation is below the threshold $\varepsilon$.
 \begin{algorithm}[h]
 \algsetup{
 	indent=12pt,
@@ -498,6 +500,7 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 	linenodelimiter=.
 }
 \begin{algorithmic}[1]
+	\STATE Define the $M$-dimensional parameter vector $\theta^{n,i,j}$ as the $n$-th time-step of the $j$-th chain of the $i$-th proposal width
 	\FOR{$i = 1$ \TO $N_{width}$}
 		\FOR{$j = 1$ \TO $N_{chain}$} % initialize chains
 %<<<<<<< HEAD
@@ -505,8 +508,8 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 %			\STATE Initialize chain: $\theta_0^{i,j} \sim U([-L,L]^M)$
 %			\STATE Perform Metro/RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i$
 %=======
-			\STATE Initialize chain: $\theta_0^{i,j} \sim U([-L,L]^M)$
-			\STATE Calculate $\theta_n^{i,j}$ for $n = 1, ..., N_{step}$ steps using either Metropolis or RSAP with initial state $\theta_0^{i,j}$ and fixed proposal covariance matrix $\Sigma^i = \sigma^i I$
+			\STATE Initialize chain: $\theta^{0,i,j} \sim U([-L,L]^M)$
+			\STATE Calculate $\theta^{0,i,j}$ for $n = 1, ..., N_{step}$ steps using either Metropolis or RSAP with initial state $\theta^{0,i,j}$ and fixed proposal covariance matrix $\Sigma^i = \sigma^i I$
 %>>>>>>> b5fcbc9db7f719088b01834d947fbf38cd06bd54
 		\ENDFOR
 
@@ -514,7 +517,7 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 				\FOR{$j = 1$ \TO $N_{chain}$} % check for convergence
 			\STATE Initialize convergence check: isConv = false
 			\FOR{$n = 1$ \TO $N_{step}$}
-				\IF{\NOT isConv \AND $f(\theta_n^{i,j}) \le \varepsilon$}
+				\IF{\NOT isConv \AND $f(\bar \theta_n^{0,i,j}) \le \varepsilon$}
 					\STATE $c^i_n = c^i_{n-1} + 1$
 					\STATE isConv = true
 				\ELSE
@@ -528,56 +531,43 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 \caption{Test for convergence to global max}
 \end{algorithm}
 
+Two more considerations before presenting the results. Sinc ewe are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but poor for getting accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, for each test, we will include results using several different values of $\Delta$ so that its effect can be clearly seen.
 
+% IMPORTANT: I think since small $\Delta$ is good for RSAP but bad for getting a realistic posterior distribution (too peaked), we might should reframe the method as adaptive with smooth burn-in and just prove that the burn-in phase leads to ergodicity. Might have to manually change $\Delta$ at the end of the adaptive phase ($n_1+n_2$)
 
+% nDim: 3, 10, 30, 100
+% no Rosenbrock
 
-
-
-Regarding the chain ensembles used to get the cumulative probability of convergence, we uniformly randomly distribute the initial state of a large number of chains in the (square) search domain. We then mark the time step at which they are within some error tolerance of the global minimum. This threshold changes depending on the scale of the problem so that each function is compared on equal footing.
-
-$n_1,n_2$ don't matter
-
-RSAP prefers a lower value of $\Delta$ than Metropolis, but the optimal value for RSAP is better than the optimal value for Metropolis. This is so that more rejections happen, thus causing RSAP to adapt the proposal.
-
-Might should compare convergence vs. $\Delta$
-
-IMPORTANT: I think since small $\Delta$ is good for RSAP but bad for getting a realistic posterior distribution (too peaked), we might should reframe the method as adaptive with smooth burn-in and just prove that the burn-in phase leads to ergodicity. Might have to manually change $\Delta$ at the end of the adaptive phase ($n_1+n_2$)
-
-nDim 3,10,30,100
-
-no Rosenbrock
+Now, let us examine the results of our numerical tests.
 
 Plot discussion: Since the width between adjacent modes in the Ackley function is 1, a proposal width of 0.333 or less will draw samples between the modes 99.7\% or more of the time ($3\sigma$)
 
 \begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_00_AdaF.jpg}
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_AdaF.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_Diff.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg}
 \endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_00_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 2D Ackley function. 500 steps per chain, 1000 chains per width value, threshold of 0.8, $\Delta_0 = 3.5$.}
+\caption{Plots of the cumulative convergence of Metropolis (left column), RSAP (center column), and their difference (right column) performed on a 3D Ackley function. We used $\Delta = 0.01$ (top row), $\Delta = 1.0$ (center row), and $\Delta = 2.0$ (bottom row). We also used 500 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^3$.}
 \end{figure}
 
-\begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_01_AdaF.jpg}
-\endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_01_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 2D Ackley function. 500 steps per chain, 1000 chains per width value, threshold of 0.8, $\Delta_0 = 0.5$.}
-\end{figure}
 
-\begin{figure}[!htb]
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_02_AdaF.jpg}
-\endminipage\hfill
-\minipage{0.5\textwidth}
-	\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_002D_02_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left) and RSAP (right) on a 2D Ackley function. 500 steps per chain, 1000 chains per width value, threshold of 0.8, $\Delta_0 = 0.01$.}
-\end{figure}
 
 
 \begin{comment}
