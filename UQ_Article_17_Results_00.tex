@@ -69,7 +69,7 @@ This paper is outlined in the following way. First, we open with a review of the
 \subsection{Metropolis}
 One of the most well-known and widely-used MCMC techniques is the original Metropolis method. First developed by Metropolis et al. \cite{Metro} and later generalized by Hastings \cite{Hastings}, this simple method has been the foundation for countless new and improved versions that have continued to build on the basic principles found within their predecessor.
 
-Given data that we wish for the model to reproduce, the Metropolis method attempts to sample a distribution over the model parameters called the \textit{posterior}. This distribution will have a peak at the values of the model parameters which best approximate the data. However, we do not know the posterior since we cannot directly invert the parameter-data relationship (and since to do so would be to know the solution to the problem). Therefore, we must express it in terms of distributions which we do know. From Bayes theorem, we have
+Given data that we wish for the model to reproduce, the Metropolis method attempts to sample a distribution over the model parameters called the \textit{posterior}. This distribution will have a peak at the values of the model parameters which best approximate the data. However, we do not know the posterior since we cannot directly invert the parameter-data relationship (and since to do so would be to know the solution to the problem). Therefore, we must express it in terms of distributions which we do know. From Bayes's Theorem, we have (given data $y$ and model parameters $\theta$)
 \begin{equation}
 %	\pi(\theta|y) = \dfrac{\ell(y|\theta)p(\theta)}{p(y)} \propto \pi(y|\theta)p(\theta)
 	\pi(\theta|y) \propto \ell(y|\theta)p(\theta)
@@ -90,7 +90,7 @@ Now, concerning the specifics of how the Metropolis method successfully samples 
 		\STATE Set $\theta_n = \theta'_n$ with probability $\alpha$, else $\theta_n = \theta_{n-1}$
 	\ENDFOR
 \end{algorithmic}
-\caption{Metropolis-Hastings}
+\caption{The Metropolis method}
 \end{algorithm}
 
 %Steps 4-5 let the algorithm accept a new state with either better fitness than the previous state or only marginally less fitness. Several things are achieved by doing this. First, the majority of time is spent searching through regions of increasingly better fitness. Also, since worse solutions can still be accepted, the algorithm can still climb back out of false extrema.
@@ -490,8 +490,8 @@ When performing this test (see Algorithm 3.1), we used $M$-dimensional Ackley fu
 \begin{equation}
 	f(\theta) = 20 \bigg( 1 - \textrm{exp}\bigg( -0.2 \Big( \dfrac{1}{M} \sum_{m=1}^{M} \theta_m^2 \Big)^{0.5} \bigg) \bigg) + \bigg( e - \textrm{exp}\bigg( \dfrac{1}{M} \sum_{m=1}^{M} \textrm{cos}(2 \pi \theta_m) \bigg) \bigg)
 \end{equation}
-over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $N_{width}$ proposal widths at equally-spaced intervals.  Obviously, since RSAP adapts the proposal width, we will be altering the \textit{fixed} proposal width, letting these values also be the widths for Metropolis.  We say ``widths" rather than ``covariance matrices" since---for the Ackley function---each parameter axis is scaled equally, thus causing a single width to work for each. For every width, we run $N_{chains}$, each for $N_{steps}$, with initial states that are uniformly-distributed across the cubical domain. The cumulative probability of convergence to the global minimum of the Ackely function is then calculated over the time-steps for each width by determining at which time-step each chain's Ackley evaluation is below the threshold $\varepsilon$.
-\begin{algorithm}[h]
+over a domain defined by the $M$-dimensional cube $[-L,L]^M$.
+\begin{algorithm}[!b]
 \algsetup{
 	indent=12pt,
 	linenosize=\small,
@@ -528,6 +528,8 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$. We sweep through $
 \end{algorithmic}
 \caption{Test for convergence to global max}
 \end{algorithm}
+We sweep through $N_{width}$ proposal widths at equally-spaced intervals, i.e., $\sigma^i = i \sigma_{max} / (N_{width}-1)$ where $0 \le i \le N_{width}-1$.  Obviously, since RSAP adapts the proposal width, we will be sweeping through its \textit{fixed} proposal width, letting these values also equal the widths for Metropolis.  We say ``widths" rather than ``covariance matrices" since---for the Ackley function---each parameter axis is scaled equally, thus causing a single width to work for each. For every width value, we run $N_{chains}$, each for $N_{steps}$, with initial states that are uniformly-distributed across the cubical domain. The cumulative probability of convergence to the global minimum of the Ackely function versus the time-step is then calculated for each width by determining at which time-step each chain's Ackley evaluation is below the threshold $\varepsilon$.
+
 
 Let us note two more considerations before presenting the results. Since we are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing us in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but poor for getting accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, for the first test, we will include results using several different values of $\Delta$ so that its effect can be clearly seen, after which---for the sake of simplicity---we will restrict ourselves to only small values of $\Delta$.
 
@@ -578,7 +580,7 @@ Next in Figure 6, we have a comparison over a 10D Ackley function.
 \endminipage\hfill
 \caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $\Delta = 0.01$, 500 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^10$.}
 \end{figure}
-One will notice the scale of the axes has changed dramatically from Figure 5, since a 10D space requires more time-steps to explore and the optimal width decreases \cite{SigScale}. 
+One will notice the scale of the axes has changed dramatically from Figure 5, since a 10D space requires more time-steps to explore and the optimal width decreases \cite{SigScale}. Also, though it was apparent in Figure 5, it is now quite noticable that the optimal (fixed) proposal width for RSAP is less than that for Metropolis. The shift is significant enough that there is a faint blue region in the difference plot (at roughly 0.4), indicating that Metropolis very slightly outperforms RSAP at that width value. On the other hand, looking at the smaller widths, there is no comparison, as RSAP completely dominates Metropolis.
 
 
 \begin{comment}

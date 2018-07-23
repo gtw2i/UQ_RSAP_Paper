@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.14)  16 JUL 2018 17:19
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.14)  17 JUL 2018 18:23
 entering extended mode
 **./UQ_Article_17_Results_00.tex
 (UQ_Article_17_Results_00.tex
@@ -682,7 +682,7 @@ Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[8] <RSAP_True_02.png, id=173, 686.565pt x 654.94687pt>
+[8] <RSAP_True_02.png, id=172, 686.565pt x 654.94687pt>
 File: RSAP_True_02.png Graphic file (type png)
  <use RSAP_True_02.png>
 Package pdftex.def Info: RSAP_True_02.png used on input line 331.
@@ -814,7 +814,7 @@ File: UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg used on input
- line 541.
+ line 543.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_01_AdaF.jpg, id=255, 803.0pt x 602.25pt>
@@ -822,7 +822,7 @@ File: UQPlot_ConvWidth_Ackley_003D_01_AdaF.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_01_AdaF.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_01_AdaF.jpg used on input
- line 543.
+ line 545.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg, id=256, 803.0pt x 602.25pt>
@@ -830,7 +830,7 @@ File: UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg used on input
- line 545.
+ line 547.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg, id=257, 803.0pt x 602.25pt>
@@ -838,7 +838,7 @@ File: UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg used on input
- line 548.
+ line 550.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg, id=258, 803.0pt x 602.25pt>
@@ -846,7 +846,7 @@ File: UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg used on input
- line 550.
+ line 552.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg, id=259, 803.0pt x 602.25pt>
@@ -854,7 +854,7 @@ File: UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg used on input
- line 552.
+ line 554.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_00_Diff.jpg, id=260, 803.0pt x 602.25pt>
@@ -862,7 +862,7 @@ File: UQPlot_ConvWidth_Ackley_003D_00_Diff.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_00_Diff.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_00_Diff.jpg used on input
- line 555.
+ line 557.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg, id=261, 803.0pt x 602.25pt>
@@ -870,7 +870,7 @@ File: UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg used on input
- line 557.
+ line 559.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg, id=262, 803.0pt x 602.25pt>
@@ -878,7 +878,7 @@ File: UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg used on input
- line 559.
+ line 561.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 Underfull \vbox (badness 1354) has occurred while \output is active []
@@ -898,7 +898,7 @@ File: UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg used on input
- line 571.
+ line 573.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg, id=272, 803.0pt x 602.25pt>
@@ -906,7 +906,7 @@ File: UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg used on input
- line 574.
+ line 576.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 <UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg, id=273, 803.0pt x 602.25pt>
@@ -914,7 +914,7 @@ File: UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg used on input
- line 577.
+ line 579.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 No file UQ_Article_17_Results_00.bbl.
@@ -933,25 +933,25 @@ D_00_AdaT.jpg> <./UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg>]
 \tf@thm=\write4
 \openout4 = `UQ_Article_17_Results_00.thm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 653.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 655.
 
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
 [18]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 653.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 655.
  (UQ_Article_17_Results_00.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 653.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 653.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 655.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 655.
 Package rerunfilecheck Info: File `UQ_Article_17_Results_00.out' has not change
 d.
 (rerunfilecheck)             Checksum: 8B7D112A03C694424CDFD50A155C9BE5;1045.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 653.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 655.
  ) 
 Here is how much of TeX's memory you used:
  10267 strings out of 493333
  160880 string characters out of 3139191
- 384656 words of memory out of 3000000
+ 383656 words of memory out of 3000000
  13512 multiletter control sequences out of 15000+200000
  14822 words of font info for 56 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -973,7 +973,7 @@ ts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
 msfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/c
 m/cmsy9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.
 pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-Output written on UQ_Article_17_Results_00.pdf (18 pages, 2296985 bytes).
+Output written on UQ_Article_17_Results_00.pdf (18 pages, 2298020 bytes).
 PDF statistics:
  382 PDF objects out of 1000 (max. 8388607)
  137 named destinations out of 1000 (max. 500000)
