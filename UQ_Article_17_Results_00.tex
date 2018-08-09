@@ -170,7 +170,9 @@ There are several advantages RSAP has over standard Metropolis or other adaptive
 
 % Therefore, we had to give the algorithm the ability to determine if it was not making progress---if, say, it were stuck in a false minimum---and alter the width of the Gaussian proposal (in each parameter's dimension separately) so that it might escape quicker than it would by simply waiting for an acceptable sample to be drawn from the original proposal.
 
-A second advantage is that our method does not require an initial greedy search procedure to find a local or global mode of the posterior. Due to its powerfully adaptability, RSAP can act as its own greedy search or burn in method.
+A second advantage is that our method does not require an initial greedy search procedure to find a local or global mode of the posterior. Due to its powerful adaptability, RSAP can act as its own greedy search or burn in method.
+
+Be specific about other methods, reference papers
 
 Yet another advantage that RSAP has over other more complicated adaptive methods is its trivial implementation and the minimal overhead it requires. Both the extra storage and computing time required for our method compared to standard Metropolis are negligible, since only several additional tuning parameters, counters, and scale factors must be stored and the adaptive scaling functions are computationally trivial to evaluate. Because of this, there is essentially no reason not to use RSAP as opposed to standard Metropolis.
 
@@ -406,7 +408,7 @@ where $\epsilon$ is an error term which we include in some of the tests below. T
 
 There is also the matter of setting the adaptation parameters to their proper values. Clearly, the optimal values of these parameters are problem-dependent; so we attempted to find a set of reasonable values which improved the performance gain over Metropolis for as many test cases as possible. We thus arrived at maximum scaling magnitudes of $\hat A_{t} = 0.1, \hat A_{w} = 10$, respectively. Being able to both increase and decrease the proposal width by an order of magnitude ensures that the true optimal width is likely contained within the interval $[\hat A_t \sigma_f, \hat A_w \sigma_f]$. Next, concerning the scaling rates, we found that their values were less significant than the magnitudes in determining performance gain. Their values were set to $r_{t} = r_{w} = 0.3$, since this puts the scaling to within approximately 5\% of its maximum effect within 10 rejection steps ($e^{-0.3 \cdot 10} \approx 0.049$). Any longer would take too long to reach maximum scaling and frequent acceptances would leave the more extreme scaling values unused. Lastly, the probability scaling intervals $n_1, n_2$ are likely the most problem-dependent parameters since they determine how long RSAP is allowed to be adaptive. As discussed earlier, $n_1 < N$ should be large w.r.t. $N$ while $n_2 \leq N - n_1$ has more freedom. Because of their problem dependence, we will vary them throughout the tests.
 
-Concerning modified AM, we ran the method for $N_{burn}$ steps using the same fixed proposal widths as the other two methods. Once these steps have passed, we begin using the modified AM kernel, while ignoring a specified fraction of the initial steps (say the first $N_{burn}/2$ steps) in all of the covariance calculations. This is so that the covariance matrix calculations aren't as biased by the choice of initial state.
+Concerning modified AM, we ran the method for $N_{burn}$ steps using the same fixed proposal widths as the other two methods. Once these steps have passed, we begin using the modified AM kernel, while ignoring a specified fraction of the initial steps (specifically, the first $N_{burn}/2$ steps) in all of the covariance calculations. This is so that the covariance matrix calculations aren't as biased by the choice of initial state. Also, we set $\beta = 0.5$ for all of the tests.
 
 WHY did we use these test functions? Cite Ackley, Rosenbrock, others. Justify usage.
 
@@ -544,18 +546,18 @@ Now, let us examine the results of our numerical tests.
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg}
 \endminipage\hfill %%%%%%%%%%%%%%%%%%%
 \minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AM.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg}
+\\
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg}
 \\
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg}
 \\
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg}
-\endminipage\hfill %%%%%%%%%%%%%%%%%%%
-\minipage{0.333\textwidth}
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_Diff.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg}
 \endminipage\hfill
 \caption{Plots of the cumulative convergence of Metropolis (left column), RSAP (center column), and their difference (right column) performed on a 3D Ackley function. We used $\Delta = 0.01$ (top row), $\Delta = 1.0$ (center row), and $\Delta = 2.0$ (bottom row). We also used 500 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^3$.}
 \end{figure}
@@ -564,20 +566,36 @@ Figure 5 contains the results of a comparison between RSAP and Metropolis on a 3
 It is also clear how significant the effect of changing the value of $\Delta$ can be, with a value of 0.01 (top row) performing notably superior to 2.0 (bottom row). For both methods, lower $\Delta$ will allow the chains to drift more easily into sub-optimal regions, thus slowing the burn-in process. As stated before, this problem is compounded for RSAP since it depends on rejections to operate effectively.
 
 
-Next in Figure 6, we have a comparison over a 10D Ackley function.
+Next, in Figure 6, we have a comparison over a 10D Ackley function.
 \begin{figure}[!htb]
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg}
 \endminipage\hfill %%%%%%%%%%%%%%%%%%%
 \minipage{0.333\textwidth}
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AM.jpg}
 \endminipage\hfill %%%%%%%%%%%%%%%%%%%
 \minipage{0.333\textwidth}
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_Diff.jpg}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg}
 \endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^10$.}
+\caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$.}
 \end{figure}
 One will notice the scale of the axes has changed dramatically from Figure 5, since a 10D space requires more time-steps to explore and the optimal width decreases \cite{SigScale}. Also, though it was apparent in Figure 5, it is now quite noticable that the optimal (fixed) proposal width for RSAP is less than that for Metropolis. The shift is significant enough that there is a faint blue region in the difference plot (at roughly 0.4), indicating that Metropolis very slightly outperforms RSAP at that width value. On the other hand, looking at the smaller widths, there is no comparison, as RSAP completely dominates Metropolis.
+
+
+Finally, we have a comparison over a 20D Ackley function (note that the axes' scales have changed again).
+\begin{figure}[!htb]
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg}
+\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+\minipage{0.333\textwidth}
+\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_020D_00_Diff.jpg}
+\endminipage\hfill
+\caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 20D Ackley function. We used $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}
+\end{figure}
+For this test, we shrunk the domain from $[-15.0,15.0]^{20}$ to $[-10.0,10.0]^{20}$ and decreased $\Delta_0$ by a factor of 10. Though it is difficult to tell from the image, there was zero convergence from any of the Metropolis chains.
 
 
 \begin{comment}
