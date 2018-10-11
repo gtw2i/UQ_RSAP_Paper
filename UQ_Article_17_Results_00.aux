@@ -19,6 +19,10 @@
 \citation{AM_RR}
 \citation{Metro}
 \citation{AM_RR}
+\select@language{english}
+\@writefile{toc}{\select@language{english}}
+\@writefile{lof}{\select@language{english}}
+\@writefile{lot}{\select@language{english}}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}}
 \citation{Metro}
 \citation{Hastings}
@@ -38,21 +42,23 @@
 \citation{RRAdaptErgo}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {2.1}{\ignorespaces Rejection-scaled adaptive proposal (RSAP)}}{8}{algorithm.48}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Ergodicty of RSAP}{8}{subsection.49}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Proving diminishing adaptation}{8}{subsubsection.50}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces A graphical depiction of the method and the possible transitions that can take place. At any node (proposal distribution) in the graph, four transitions can occur: increasing one of the three indices (rejection) or returning to the initial state (acceptance). Note that we have omitted the time step superscript since to properly represent the method graphically would require another dimension to represent time. We instead identify all the proposals with the same adaptation degrees and simply use primes to denote the fact that they represent numerous other proposals with equivalent adaptation degrees but larger time step superscripts.}}{10}{figure.55}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Computational testing}{12}{section.64}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Discussion of RSAP and modified AM parameter values used in testing}{13}{subsection.65}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Chain mixing}{14}{subsection.67}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Plots of the Gaussian function, chain trace, and binned posterior estimate resulting from a run with 5,000 steps. In the trace plot in the center, the blue curve is the actual chain and red curve contains the only points with the highest posterior values up to the current time step. For the posterior plot on the right, we used 45 bins to get the image for the posterior distribution.}}{14}{figure.69}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Plots of an Ackley function, chain trace, and binned posterior estimate resulting from a run with 5,000 steps.}}{14}{figure.72}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plots of the bimodal function, chain trace, and binned posterior estimate resulting from an RSAP run with 5,000 steps.}}{15}{figure.75}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Convergence to global minimum}{15}{subsection.77}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {3.1}{\ignorespaces Test for convergence to global max}}{16}{algorithm.99}}
+\@writefile{thm}{\contentsline {theorem}{{Theorem}{2.1}{}}{8}{theorem.50}}
+\newlabel{ErgoThm}{{2.1}{8}{Ergodicty of RSAP}{Item.52}{}}
+\newlabel{ErgoThm@cref}{{[theorem][1][2]2.1}{8}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Proving diminishing adaptation}{9}{subsubsection.53}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces A graphical depiction of the method and the possible transitions that can take place. At any node (proposal distribution) in the graph, four transitions can occur: increasing one of the three indices (rejection) or returning to the initial state (acceptance). Note that we have omitted the time step superscript since to properly represent the method graphically would require another dimension to represent time. We instead identify all the proposals with the same adaptation degrees and simply use primes to denote the fact that they represent numerous other proposals with equivalent adaptation degrees but larger time step superscripts.}}{10}{figure.58}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Computational testing}{13}{section.67}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Discussion of RSAP and modified AM parameter values used in testing}{13}{subsection.68}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Chain mixing}{14}{subsection.70}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Plots of the Gaussian function, chain trace, and binned posterior estimate resulting from a run with 5,000 steps. In the trace plot in the center, the blue curve is the actual chain and red curve contains the only points with the highest posterior values up to the current time step. For the posterior plot on the right, we used 45 bins to get the image for the posterior distribution.}}{14}{figure.72}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Plots of an Ackley function, chain trace, and binned posterior estimate resulting from a run with 5,000 steps.}}{15}{figure.75}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plots of the bimodal function, chain trace, and binned posterior estimate resulting from an RSAP run with 5,000 steps.}}{15}{figure.78}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3.1}{\ignorespaces Test for convergence to global max}}{16}{algorithm.102}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Convergence to global minimum}{16}{subsection.80}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D Ackley function. We used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$.}}{17}{figure.103}}
 \citation{SigScale}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D Ackley function. We used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$.}}{17}{figure.100}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $N_{brun} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$.}}{18}{figure.102}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 20D Ackley function. We used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}}{18}{figure.104}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{18}{section.106}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $N_{brun} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$.}}{18}{figure.105}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{18}{section.109}}
 \bibstyle{siamplain}
 \bibdata{references}
 \bibcite{RWM}{1}
@@ -68,4 +74,5 @@
 \bibcite{Interact}{11}
 \bibcite{citizen}{12}
 \bibcite{galaxyFE}{13}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 20D Ackley function. We used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}}{19}{figure.107}}
 \bibcite{jspam}{14}

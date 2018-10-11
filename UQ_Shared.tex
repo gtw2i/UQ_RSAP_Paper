@@ -5,13 +5,14 @@
 
 
 % Packages and macros go here
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 \usepackage{lipsum}
 %\usepackage{dblfloatfix}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage{epstopdf}
 \usepackage{algorithmic}
-
 %usepackage[utf8]{inputenc}
 \usepackage{textpos}
 \usepackage{verbatim}
@@ -23,6 +24,16 @@
 %\usepackage{algorithmic}
 %\usepackage[ruled]{algorithm2e}
 %\usepackage[linesnumbered,ruled]{algorithm2e}
+
+%\newtheorem{theorem}{Theorem}
+
+% for enumerate spacing
+\newenvironment{tight_enum}{
+\begin{enumerate}[label=\alph*.]
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+}{\end{enumerate}}
+
 \ifpdf
   \DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg}
 \else
@@ -49,7 +60,7 @@
 % Title. If the supplement option is on, then "Supplementary Material"
 % is automatically inserted before the title.
 \title{An adaptive Metropolis algorithm with rejection-based Gaussian proposal-scaling for fast convergence in multimodal parameter spaces \thanks{Submitted to the editors DATE.
-\funding{This work was funded by the Fog Research Institute under contract no.~FRI-454.}}}
+\funding{This work was funded by something.}}}
 
 % Authors: full names plus addresses.
 \author{Graham West \thanks{Department of Computational Science, Middle Tennessee State University, Murfreesboro, TN 
