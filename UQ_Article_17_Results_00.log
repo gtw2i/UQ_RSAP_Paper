@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.14)  11 OCT 2018 14:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.14)  11 OCT 2018 14:56
 entering extended mode
 **./UQ_Article_17_Results_00.tex
 (UQ_Article_17_Results_00.tex
@@ -1061,40 +1061,71 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[5]
+[5] <ProposalPlot_Separate.jpg, id=129, 878.28125pt x 658.46pt>
+File: ProposalPlot_Separate.jpg Graphic file (type jpg)
+
+<use ProposalPlot_Separate.jpg>
+Package pdftex.def Info: ProposalPlot_Separate.jpg used on input line 188.
+(pdftex.def)             Requested size: 175.65314pt x 131.68967pt.
+
+<ProposalPlot_Mixed.jpg, id=130, 878.28125pt x 658.46pt>
+File: ProposalPlot_Mixed.jpg Graphic file (type jpg)
+
+<use ProposalPlot_Mixed.jpg>
+Package pdftex.def Info: ProposalPlot_Mixed.jpg used on input line 191.
+(pdftex.def)             Requested size: 175.65314pt x 131.68967pt.
+
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[6]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 243.
+[6] <ProposalPlot_Scaling.jpg, id=137, 878.28125pt x 658.46pt>
+File: ProposalPlot_Scaling.jpg Graphic file (type jpg)
 
- ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+<use ProposalPlot_Scaling.jpg>
+Package pdftex.def Info: ProposalPlot_Scaling.jpg used on input line 225.
+(pdftex.def)             Requested size: 193.22247pt x 144.86165pt.
+
+<MixingProbabilities.jpg, id=138, 878.28125pt x 658.46pt>
+File: MixingProbabilities.jpg Graphic file (type jpg)
+
+<use MixingProbabilities.jpg>
+Package pdftex.def Info: MixingProbabilities.jpg used on input line 228.
+(pdftex.def)             Requested size: 237.1391pt x 177.78658pt.
+
+Overfull \hbox (14.87268pt too wide) in paragraph at lines 228--229
+[][] |
+ []
+
+
+Underfull \hbox (badness 1005) has occurred while \output is active
+[]\OT1/cmss/bx/n/9 AN ADAP-TIVE METROPO-LIS AL-GO-RITHM WITH REJECTION-BASED GA
+US-SIAN PROPOSAL-
+ []
+
+
+Overfull \vbox (14.04993pt too high) has occurred while \output is active []
+
+
+[7 <./ProposalPlot_Separate.jpg> <./ProposalPlot_Mixed.jpg>]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 266.
+
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 243.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 266.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-Underfull \hbox (badness 1005) has occurred while \output is active
-[]\OT1/cmss/bx/n/9 AN ADAP-TIVE METROPO-LIS AL-GO-RITHM WITH REJECTION-BASED GA
-US-SIAN PROPOSAL-
- []
-
-
-Overfull \vbox (14.04993pt too high) has occurred while \output is active []
-
-
-[7]
 Package hyperref Info: bookmark level for unknown theorem defaults to 0 on inpu
-t line 273.
+t line 296.
 
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[8]
+[8 <./ProposalPlot_Scaling.jpg> <./MixingProbabilities.jpg>]
 Underfull \hbox (badness 1005) has occurred while \output is active
 []\OT1/cmss/bx/n/9 AN ADAP-TIVE METROPO-LIS AL-GO-RITHM WITH REJECTION-BASED GA
 US-SIAN PROPOSAL-
@@ -1104,19 +1135,23 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[9] <RSAP_True_02.png, id=185, 686.565pt x 654.94687pt>
+[9] <RSAP_True_02.png, id=197, 686.565pt x 654.94687pt>
 File: RSAP_True_02.png Graphic file (type png)
  <use RSAP_True_02.png>
-Package pdftex.def Info: RSAP_True_02.png used on input line 326.
+Package pdftex.def Info: RSAP_True_02.png used on input line 350.
 (pdftex.def)             Requested size: 205.97108pt x 196.48558pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[10 <./RSAP_True_02.png>]
+[10]
+Underfull \vbox (badness 3930) has occurred while \output is active []
+
+
 Underfull \hbox (badness 1005) has occurred while \output is active
 []\OT1/cmss/bx/n/9 AN ADAP-TIVE METROPO-LIS AL-GO-RITHM WITH REJECTION-BASED GA
 US-SIAN PROPOSAL-
@@ -1126,7 +1161,7 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[11]
+[11 <./RSAP_True_02.png>]
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
@@ -1140,77 +1175,53 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[13] <UQPlot_Gaussian_00_Function.jpg, id=215, 1806.75pt x 1204.5pt>
-File: UQPlot_Gaussian_00_Function.jpg Graphic file (type jpg)
-
-<use UQPlot_Gaussian_00_Function.jpg>
-Package pdftex.def Info: UQPlot_Gaussian_00_Function.jpg used on input line 427
-.
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Gaussian_00_Trace.jpg, id=216, 1806.75pt x 1204.5pt>
-File: UQPlot_Gaussian_00_Trace.jpg Graphic file (type jpg)
-
-<use UQPlot_Gaussian_00_Trace.jpg>
-Package pdftex.def Info: UQPlot_Gaussian_00_Trace.jpg used on input line 430.
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Gaussian_00_Posterior.jpg, id=217, 1806.75pt x 1204.5pt>
-File: UQPlot_Gaussian_00_Posterior.jpg Graphic file (type jpg)
-
-<use UQPlot_Gaussian_00_Posterior.jpg>
-Package pdftex.def Info: UQPlot_Gaussian_00_Posterior.jpg used on input line 43
-3.
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Ackley_00_Function.jpg, id=218, 1806.75pt x 1204.5pt>
-File: UQPlot_Ackley_00_Function.jpg Graphic file (type jpg)
-
-<use UQPlot_Ackley_00_Function.jpg>
-Package pdftex.def Info: UQPlot_Ackley_00_Function.jpg used on input line 446.
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Ackley_00_Trace.jpg, id=219, 1806.75pt x 1204.5pt>
-File: UQPlot_Ackley_00_Trace.jpg Graphic file (type jpg)
-
-<use UQPlot_Ackley_00_Trace.jpg>
-Package pdftex.def Info: UQPlot_Ackley_00_Trace.jpg used on input line 449.
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Ackley_00_Posterior.jpg, id=220, 1806.75pt x 1204.5pt>
-File: UQPlot_Ackley_00_Posterior.jpg Graphic file (type jpg)
-
-<use UQPlot_Ackley_00_Posterior.jpg>
-Package pdftex.def Info: UQPlot_Ackley_00_Posterior.jpg used on input line 452.
-
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
+[13]
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[14 <./UQPlot_Gaussian_00_Function.jpg> <./UQPlot_Gaussian_00_Trace.jpg> <./UQP
-lot_Gaussian_00_Posterior.jpg>]
-<UQPlot_Bimodal_00_Function.jpg, id=229, 1806.75pt x 1204.5pt>
-File: UQPlot_Bimodal_00_Function.jpg Graphic file (type jpg)
+[14] <UQPlot_Gaussian_00_Function.jpg, id=237, 1806.75pt x 1204.5pt>
+File: UQPlot_Gaussian_00_Function.jpg Graphic file (type jpg)
 
-<use UQPlot_Bimodal_00_Function.jpg>
-Package pdftex.def Info: UQPlot_Bimodal_00_Function.jpg used on input line 465.
-
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Bimodal_00_Trace.jpg, id=230, 1806.75pt x 1204.5pt>
-File: UQPlot_Bimodal_00_Trace.jpg Graphic file (type jpg)
-
-<use UQPlot_Bimodal_00_Trace.jpg>
-Package pdftex.def Info: UQPlot_Bimodal_00_Trace.jpg used on input line 468.
-(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
-
-<UQPlot_Bimodal_00_Posterior.jpg, id=231, 1806.75pt x 1204.5pt>
-File: UQPlot_Bimodal_00_Posterior.jpg Graphic file (type jpg)
-
-<use UQPlot_Bimodal_00_Posterior.jpg>
-Package pdftex.def Info: UQPlot_Bimodal_00_Posterior.jpg used on input line 471
+<use UQPlot_Gaussian_00_Function.jpg>
+Package pdftex.def Info: UQPlot_Gaussian_00_Function.jpg used on input line 453
 .
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Gaussian_00_Trace.jpg, id=238, 1806.75pt x 1204.5pt>
+File: UQPlot_Gaussian_00_Trace.jpg Graphic file (type jpg)
+
+<use UQPlot_Gaussian_00_Trace.jpg>
+Package pdftex.def Info: UQPlot_Gaussian_00_Trace.jpg used on input line 456.
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Gaussian_00_Posterior.jpg, id=239, 1806.75pt x 1204.5pt>
+File: UQPlot_Gaussian_00_Posterior.jpg Graphic file (type jpg)
+
+<use UQPlot_Gaussian_00_Posterior.jpg>
+Package pdftex.def Info: UQPlot_Gaussian_00_Posterior.jpg used on input line 45
+9.
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Ackley_00_Function.jpg, id=240, 1806.75pt x 1204.5pt>
+File: UQPlot_Ackley_00_Function.jpg Graphic file (type jpg)
+
+<use UQPlot_Ackley_00_Function.jpg>
+Package pdftex.def Info: UQPlot_Ackley_00_Function.jpg used on input line 472.
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Ackley_00_Trace.jpg, id=241, 1806.75pt x 1204.5pt>
+File: UQPlot_Ackley_00_Trace.jpg Graphic file (type jpg)
+
+<use UQPlot_Ackley_00_Trace.jpg>
+Package pdftex.def Info: UQPlot_Ackley_00_Trace.jpg used on input line 475.
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Ackley_00_Posterior.jpg, id=242, 1806.75pt x 1204.5pt>
+File: UQPlot_Ackley_00_Posterior.jpg Graphic file (type jpg)
+
+<use UQPlot_Ackley_00_Posterior.jpg>
+Package pdftex.def Info: UQPlot_Ackley_00_Posterior.jpg used on input line 478.
+
 (pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
 
 Underfull \hbox (badness 1005) has occurred while \output is active
@@ -1222,34 +1233,59 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[15 <./UQPlot_Ackley_00_Function.jpg> <./UQPlot_Ackley_00_Trace.jpg> <./UQPlot_
-Ackley_00_Posterior.jpg> <./UQPlot_Bimodal_00_Function.jpg> <./UQPlot_Bimodal_0
-0_Trace.jpg> <./UQPlot_Bimodal_00_Posterior.jpg>]
+[15 <./UQPlot_Gaussian_00_Function.jpg> <./UQPlot_Gaussian_00_Trace.jpg> <./UQP
+lot_Gaussian_00_Posterior.jpg> <./UQPlot_Ackley_00_Function.jpg> <./UQPlot_Ackl
+ey_00_Trace.jpg> <./UQPlot_Ackley_00_Posterior.jpg>]
+<UQPlot_Bimodal_00_Function.jpg, id=253, 1806.75pt x 1204.5pt>
+File: UQPlot_Bimodal_00_Function.jpg Graphic file (type jpg)
+
+<use UQPlot_Bimodal_00_Function.jpg>
+Package pdftex.def Info: UQPlot_Bimodal_00_Function.jpg used on input line 491.
+
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Bimodal_00_Trace.jpg, id=254, 1806.75pt x 1204.5pt>
+File: UQPlot_Bimodal_00_Trace.jpg Graphic file (type jpg)
+
+<use UQPlot_Bimodal_00_Trace.jpg>
+Package pdftex.def Info: UQPlot_Bimodal_00_Trace.jpg used on input line 494.
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
+<UQPlot_Bimodal_00_Posterior.jpg, id=255, 1806.75pt x 1204.5pt>
+File: UQPlot_Bimodal_00_Posterior.jpg Graphic file (type jpg)
+
+<use UQPlot_Bimodal_00_Posterior.jpg>
+Package pdftex.def Info: UQPlot_Bimodal_00_Posterior.jpg used on input line 497
+.
+(pdftex.def)             Requested size: 146.69664pt x 97.79553pt.
+
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[16] <UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg, id=267, 803.0pt x 602.25pt>
+[16 <./UQPlot_Bimodal_00_Function.jpg> <./UQPlot_Bimodal_00_Trace.jpg> <./UQPlo
+t_Bimodal_00_Posterior.jpg>]
+<UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg, id=264, 803.0pt x 602.25pt>
 File: UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg used on input
- line 562.
+ line 588.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
-<UQPlot_ConvWidth_Ackley_003D_00_AM.jpg, id=268, 803.0pt x 602.25pt>
+<UQPlot_ConvWidth_Ackley_003D_00_AM.jpg, id=265, 803.0pt x 602.25pt>
 File: UQPlot_ConvWidth_Ackley_003D_00_AM.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_00_AM.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_00_AM.jpg used on input l
-ine 565.
+ine 591.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
-<UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg, id=269, 803.0pt x 602.25pt>
+<UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg, id=266, 803.0pt x 602.25pt>
 File: UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg used on input
- line 568.
+ line 594.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 Underfull \hbox (badness 1005) has occurred while \output is active
@@ -1261,62 +1297,58 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[17 <./UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg> <./UQPlot_ConvWidth_Ackley_003
-D_00_AM.jpg> <./UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg>]
-<UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg, id=278, 803.0pt x 602.25pt>
+[17] <UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg, id=292, 803.0pt x 602.25pt>
 File: UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg used on input
- line 579.
+ line 605.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
-<UQPlot_ConvWidth_Ackley_010D_00_AM.jpg, id=279, 803.0pt x 602.25pt>
+<UQPlot_ConvWidth_Ackley_010D_00_AM.jpg, id=293, 803.0pt x 602.25pt>
 File: UQPlot_ConvWidth_Ackley_010D_00_AM.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_010D_00_AM.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_010D_00_AM.jpg used on input l
-ine 582.
+ine 608.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
-<UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg, id=280, 803.0pt x 602.25pt>
+<UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg, id=294, 803.0pt x 602.25pt>
 File: UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg Graphic file (type jpg)
 
 <use UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg>
 Package pdftex.def Info: UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg used on input
- line 585.
-(pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
-
-<UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg, id=282, 803.0pt x 602.25pt>
-File: UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg Graphic file (type jpg)
-
-<use UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg>
-Package pdftex.def Info: UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg used on input
- line 594.
-(pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
-
-<UQPlot_ConvWidth_Ackley_020D_00_AM.jpg, id=283, 803.0pt x 602.25pt>
-File: UQPlot_ConvWidth_Ackley_020D_00_AM.jpg Graphic file (type jpg)
-
-<use UQPlot_ConvWidth_Ackley_020D_00_AM.jpg>
-Package pdftex.def Info: UQPlot_ConvWidth_Ackley_020D_00_AM.jpg used on input l
-ine 597.
-(pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
-
-<UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg, id=284, 803.0pt x 602.25pt>
-File: UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg Graphic file (type jpg)
-
-<use UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg>
-Package pdftex.def Info: UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg used on input
- line 600.
+ line 611.
 (pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
-[18 <./UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg> <./UQPlot_ConvWidth_Ackley_010
-D_00_AM.jpg> <./UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg>]
-No file UQ_Article_17_Results_00.bbl.
+[18 <./UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg> <./UQPlot_ConvWidth_Ackley_003
+D_00_AM.jpg> <./UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg>]
+<UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg, id=304, 803.0pt x 602.25pt>
+File: UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg Graphic file (type jpg)
+
+<use UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg>
+Package pdftex.def Info: UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg used on input
+ line 620.
+(pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
+
+<UQPlot_ConvWidth_Ackley_020D_00_AM.jpg, id=305, 803.0pt x 602.25pt>
+File: UQPlot_ConvWidth_Ackley_020D_00_AM.jpg Graphic file (type jpg)
+
+<use UQPlot_ConvWidth_Ackley_020D_00_AM.jpg>
+Package pdftex.def Info: UQPlot_ConvWidth_Ackley_020D_00_AM.jpg used on input l
+ine 623.
+(pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
+
+<UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg, id=306, 803.0pt x 602.25pt>
+File: UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg Graphic file (type jpg)
+
+<use UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg>
+Package pdftex.def Info: UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg used on input
+ line 626.
+(pdftex.def)             Requested size: 148.02612pt x 111.01935pt.
 
 Underfull \hbox (badness 1005) has occurred while \output is active
 []\OT1/cmss/bx/n/9 AN ADAP-TIVE METROPO-LIS AL-GO-RITHM WITH REJECTION-BASED GA
@@ -1327,31 +1359,34 @@ US-SIAN PROPOSAL-
 Overfull \vbox (14.04993pt too high) has occurred while \output is active []
 
 
-[19 <./UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg> <./UQPlot_ConvWidth_Ackley_020
-D_00_AM.jpg> <./UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg>]
+[19 <./UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg> <./UQPlot_ConvWidth_Ackley_010
+D_00_AM.jpg> <./UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg> <./UQPlot_ConvWidth_A
+ckley_020D_00_AdaF.jpg> <./UQPlot_ConvWidth_Ackley_020D_00_AM.jpg> <./UQPlot_Co
+nvWidth_Ackley_020D_00_AdaT.jpg>]
+No file UQ_Article_17_Results_00.bbl.
 \tf@thm=\write4
 \openout4 = `UQ_Article_17_Results_00.thm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 689.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 715.
 
 Overfull \vbox (3.04993pt too high) has occurred while \output is active []
 
 
 [20]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 689.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 715.
  (UQ_Article_17_Results_00.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 689.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 689.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 715.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 715.
 Package rerunfilecheck Info: File `UQ_Article_17_Results_00.out' has not change
 d.
-(rerunfilecheck)             Checksum: 837535FF7BFD81266686074B77615AD6;984.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 689.
+(rerunfilecheck)             Checksum: D97C767CDB45FE40A111D8860568E15A;984.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 715.
  ) 
 Here is how much of TeX's memory you used:
- 11024 strings out of 493333
- 168431 string characters out of 3139191
- 401467 words of memory out of 3000000
- 14229 multiletter control sequences out of 15000+200000
+ 11060 strings out of 493333
+ 169137 string characters out of 3139191
+ 398467 words of memory out of 3000000
+ 14257 multiletter control sequences out of 15000+200000
  15122 words of font info for 57 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  36i,23n,39p,2671b,827s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1374,9 +1409,9 @@ m/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy9.p
 fb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/P
 rogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on UQ_Article_17_Results_00.pdf (20 pages, 2082679 bytes).
+Output written on UQ_Article_17_Results_00.pdf (20 pages, 2208661 bytes).
 PDF statistics:
- 408 PDF objects out of 1000 (max. 8388607)
- 145 named destinations out of 1000 (max. 500000)
- 208 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 425 PDF objects out of 1000 (max. 8388607)
+ 149 named destinations out of 1000 (max. 500000)
+ 228 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -179,8 +179,19 @@ Yet another advantage that RSAP has over other more complicated adaptive methods
 The key to the RSAP method is that it mixes a fixed-width Gaussian with two adaptable wide and thin Gaussians (one of each) into a single proposal. The thin option is included so that the chain can squeeze into tight optimal modes and the wide option so that the chain can both escape suboptimal modes and traverse state space quickly. The fixed option is included so that we always have a reasonable proposal to use in case the others adapt too much to be useful. With this reasoning in mind, the proposal for a single model parameter has the form of the linear combination
 \begin{equation}
 	q^n(\theta'|\theta^n) = p_t^n N\big(\theta^n, (\sigma_t^n)^2\big) + p_f^n N\big(\theta^n, (\sigma_f)^2\big) + p_w^n N\big(\theta^n, (\sigma_w^n)^2\big)
+	\label{Prop1D}
 \end{equation}
 where $\sigma_t^n \le \sigma_f \le \sigma_w^n$ are the proposal widths and $0 \le p^n_t, p^n_f, p^n_w \le 1$ are the mixing probabilities. Every parameter uses separately adapting wide and thin proposal widths---allowing for independent adaptation of each---as well as its own fixed width (since the different parameters are likely different units/scales).
+\begin{figure}[!htb]
+	\centering
+	\minipage{0.5\textwidth}
+		\includegraphics[scale = 0.2]{ProposalPlot_Separate}
+	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+	\minipage{0.5\textwidth}
+		\includegraphics[scale = 0.2]{ProposalPlot_Mixed}
+	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+	\caption{RSAP proposal with $\sigma_t = 0.5, \sigma_f = 1.5, \sigma_w = 2.5, p_t = p_w = p_f = 1/3$.}
+\end{figure}
 
 Concerning how we choose between the three options, we have the time-dependent probabilities $p_t^n, p_f^n, p_w^n$ that either the thin, fixed, or wide proposal (respectively) will be used. The following formulae govern the specific behavior of these probabilities.
 \begin{equation}
@@ -195,6 +206,7 @@ Concerning how we choose between the three options, we have the time-dependent p
 		\\
 		p_t^n = p_w^n & = (1 - p_f^n)/2
 	\end{split}
+	\label{mixing}
 \end{equation}
 The interval widths $n_1, n_2$ define three distinct regions for these functions. In the first region---which lasts $n_1$ steps---they describe a uniform distribution. In practice, $n_1$ should be set fairly large w.r.t. the total number of time steps $N$ so that RSAP has plenty of steps to utilize its adaptive features. The second region is a transition region---which lasts for $n_2$ steps---where proposal fixing begins to dominate the adaptation. The use of the cosine function here is somewhat arbitrary since many other monotonically increasing functions would produce similar results. From the definitions of $p_t^n, p_w^n$, there is an equal probability at each step that either thinning or widening will be chosen. There is no firm guideline for setting the second interval except $n_1 + n_2 \le N$. With the last region, we forced eventual convergence to $p_f^n \rightarrow 1$ as $n \rightarrow \infty$, and therefore ergodicity (see Section 2.3).
 
@@ -204,8 +216,19 @@ Now, the values of $\sigma_{t}^n, \sigma_{w}^n$ adapt based on the number of rec
 		A_{t}(k_{t}^n) & = 1 - (1- \hat A_{t})(1-\textrm{exp}(-r_{t} k_{t}^n))\\
 		A_{w}(k_{w}^n) & = 1 - (1- \hat A_{w})(1-\textrm{exp}(-r_{w} k_{w}^n))
 	\end{split}
+	\label{scaling}
 \end{equation}
 where $r_{w}>0$, $r_{t}>0$, $\hat A_{w}>1$, and $1>\hat A_{t}>0$. (These functions---which are identical in form to the probability functions above---were chosen since their initial value is 1, their asymptotic limit is their respective $\hat A$ value, and their rate of convergence can be easily controlled via the $r$ constants.) We then set either $\sigma_{t}^n = A_{t}(k_{t}^n) \sigma_{f}$ or $\sigma_{w}^n = A_{w}(k_{w}^n) \sigma_{f}$ (depending on which was chosen) and perform a Metropolis step using this proposal width (again remembering that process is done independently for all parameters). On the other hand, whenever a candidate is accepted, the counters are reset to zero so that $\sigma_{t}^n = \sigma_{w}^n = \sigma_{f}$ (for all parameters).
+\begin{figure}[!htb]
+	\centering
+	\minipage{0.5\textwidth}
+		\includegraphics[scale = 0.22]{ProposalPlot_Scaling}
+	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+	\minipage{0.5\textwidth}
+		\includegraphics[scale = 0.27]{MixingProbabilities}
+	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
+	\caption{Left: RSAP proposal-mixing probabilities \textnormal{(Equation (\ref{mixing}))} with $n_1 = 400, n_2 = 300$. Right: RSAP proposal-scaling functions \textnormal{(Equation (\ref{scaling}))} with $r_t , r_w = 0.3, A_t = 0.5, A_w = 5$.}
+\end{figure}
 
 To derive the full $M$-parameter proposal (which we do in Section 2.3 with the help of a great deal of added notation), one has to consider all $3^M$ permutations of the $M$ parameters selecting the three different types of adaptation. It is helpful to do a two-parameter example. Each parameter will have its own set of proposal widths $\sigma_{t,m} < \sigma_{f,m} < \sigma_{w,m}$ ($m=1,2$). Upon adaptation, both parameters must choose which form of adaptation to apply, meaning there are $3^2$ possibilities for adaptation. Therefore, defining for the sake of notation $N(\theta_1, \sigma_1^2, \sigma_2^2)$ as a bivariate Gaussian distribution with diagonal covariance matrix given by the diagonal entries $(\sigma_1^2, \sigma_2^2)$, we can write the two-parameter proposal as (time step $n$ superscripts for $\sigma$'s omitted for space reasons)
 \begin{equation}
@@ -302,13 +325,14 @@ with their respective \textit{acceptance probabilities} $a^n_{(j_1,i_1), \cdots,
 Next, define the following linear combinations as the \textit{adaptive proposals}
 \begin{equation}
 	q^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = \bigg( \sum^{3}_{j_1=1} p_{j_1}^n \cdots \sum^{3}_{j_M=1} p_{j_M}^n E((j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M)) \bigg)
+	\label{adaPro}
 \end{equation}
 with their associated \textit{acceptance probabilities}
 \begin{equation}
 	b^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = \bigg( \sum^{3}_{j_1=1} p_{j_1}^n \cdots \sum^{3}_{j_M=1} p_{j_M}^n a^n_{(j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M)} \bigg)
 \end{equation}
 %for all $n = \sum_{j = 1}^{3} i^j_m$.
-This is the $M$-parameter generalization of the one- and two-parameter proposals from Section 2.2 with the subscripts $t,f,w$ replaced with $1,2,3$, respectively. Let's examine Equation 2.5 more closely before continuing on. Regarding the indices, the integers $i^1_m$ are the degrees of proposal-\textit{thinning} adaptation while the integers $i^3_m$ are the degrees of proposal-\textit{widening} adaptation. The integers $i^2_m$ can be thought of as the degrees of proposal-\textit{fixing} adaptation (clearly a meaningless notion). They are merely auxiliary indices which help to establish conservation of adaptation degrees. Regarding the sums, there is one per parameter and their indices cover the three adaptation options so that the probability of choosing the elemental proposal $E((j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M))$ is $p_{j_1}^n \cdots p_{j_M}^n$.
+This is the $M$-parameter generalization of the one- and two-parameter proposals from Section 2.2 with the subscripts $t,f,w$ replaced with $1,2,3$, respectively. Let's examine Equation (\ref{adaPro}) more closely before continuing on. Regarding the indices, the integers $i^1_m$ are the degrees of proposal-\textit{thinning} adaptation while the integers $i^3_m$ are the degrees of proposal-\textit{widening} adaptation. The integers $i^2_m$ can be thought of as the degrees of proposal-\textit{fixing} adaptation (clearly a meaningless notion). They are merely auxiliary indices which help to establish conservation of adaptation degrees. Regarding the sums, there is one per parameter and their indices cover the three adaptation options so that the probability of choosing the elemental proposal $E((j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M))$ is $p_{j_1}^n \cdots p_{j_M}^n$.
 
 \begin{comment}
 A helpful (though not exactly correct) way to think about the generalization from $\hat q$ to $q'$ is to think of $q'$ as an $M$-fold direct product of $\hat q$ with itself. Abusing notation momentarily, define $E((s_1,k_1)) \times E((s_2, k_2)) = E((s_1,k_1), (s_2, k_2))$. Then, $q'$ can be written
@@ -328,7 +352,7 @@ Let us now examine the structure of the full proposal and how it evolves through
 	\caption{A graphical depiction of the method and the possible transitions that can take place. At any node (proposal distribution) in the graph, four transitions can occur: increasing one of the three indices (rejection) or returning to the initial state (acceptance). Note that we have omitted the time step superscript since to properly represent the method graphically would require another dimension to represent time. We instead identify all the proposals with the same adaptation degrees and simply use primes to denote the fact that they represent numerous other proposals with equivalent adaptation degrees but larger time step superscripts.}%a transition must take place between time steps (i.e. increments the superscript), thus making it unclear which step value any of the nodes on the graph should be given, particularly for the center, un-adapted node/proposal.}
 %. SHOULD THIS GRAPH HAVE ANY RETURN LOOPS?   IT MAY BE CONFUSING TO HAVE STATES FROM Q001 TO Q000 BUT NOT FROM THE OTHERS.	
 \end{figure}
-One can think of method runs as paths through this graph. The first state is always $q^0_{0,0,0}$ since no adaptation has yet taken place. Consequently, the first full proposal $q^0$ is also $q^0_{0,0,0}$. As illustrated by the graph, there are four possible transitions from any given state. If acceptance occurs, the state returns to $q^0_{0,0,0}$ (the fixed proposal with no adaptation). Alternatively, if the candidate is rejected, we will increment the adaptive degree indices corresponding to the elemental proposal which was used. For example, suppose that we chose to use a thin elemental proposal and the sample drawn from it was rejected. Then, we increment the thin proposal index so that the adaptive proposal used in the next time step will be $q^1_{1,0,0}$. We can represent this mathematically with linear combinations of the adaptive proposals. Equations 2.9 below show the full proposals through $q^2$.
+One can think of method runs as paths through this graph. The first state is always $q^0_{0,0,0}$ since no adaptation has yet taken place. Consequently, the first full proposal $q^0$ is also $q^0_{0,0,0}$. As illustrated by the graph, there are four possible transitions from any given state. If acceptance occurs, the state returns to $q^0_{0,0,0}$ (the fixed proposal with no adaptation). Alternatively, if the candidate is rejected, we will increment the adaptive degree indices corresponding to the elemental proposal which was used. For example, suppose that we chose to use a thin elemental proposal and the sample drawn from it was rejected. Then, we increment the thin proposal index so that the adaptive proposal used in the next time step will be $q^1_{1,0,0}$. We can represent this mathematically with linear combinations of the adaptive proposals. Equations (\ref{exQ}) below show the full proposals through $q^2$.
 \begin{equation}
 	\begin{split}
 		Q^0 = & \hspace{3pt} q_{0,0,0}^0
@@ -345,6 +369,7 @@ One can think of method runs as paths through this graph. The first state is alw
 		\\
 		& \hspace{3pt} r^1_{(1,1)} p^1_1 r^0_{(3,0)} p^0_3 q_{1,0,1}^2 + r^1_{(2,1)} p^1_2 r^0_{(3,0)} p^0_3 q_{0,1,1}^2 + r^1_{(3,1)} p^1_3 r^0_{(3,0)} p^0_3 q_{0,0,2}^2
 	\end{split}
+	\label{exQ}
 \end{equation}
 As can be seen (and was mentioned earlier), $Q^n$ contains all adaptive proposals of total degree up to $n$, i.e., $i_1^1+i_1^2+i_1^3 \le n$ (for $M$ parameters, this inequality holds for all parameters simultaneously) . We can write $Q^n$ succinctly as
 \begin{equation}
@@ -373,6 +398,7 @@ where $m = 1, \cdots, M$. We can construct several recurrence relations which de
 		\\
 		& \hspace{3pt} \Big( c^{n}_{i^1_1, \cdots, i^{j_1}_1-1, \cdots, i^3_1, \cdots, i^1_M, \cdots, i^{j_M}_M-1, \cdots, i^3_M} \Big)
 	\end{split}
+	\label{recur}
 \end{equation}
 The first relation is fairly basic, as it simply was derived from the fact that the adaptation-less proposal will be used at any step which immediately follows an acceptance. Consequently, it finds the total, weighted acceptance probability given all possible proposals which could be used at that step. This is equal to the probability that the adaptation-less proposal will be chosen at the following step. The second relation is more complicated. Conceptually, it finds the total, weighted rejection probability from all proposals which could possibly precede the proposal under consideration. More specifically, it does this by summing the weighted rejection probabilities over all valid permutations of subtracting one from the three types adaptation degrees for all $M$ parameters (of which there are no more than $3^M$ permutations). A permutation is considered valid when subtracting one does not give a negative adaptation degree (thus the $i^{j_m}_m \ge 1$ under the sums).
 
@@ -387,9 +413,9 @@ Then, using the recurrence relation, we get
 \begin{equation}
 	c^{n+1}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M} = \Big( r^n_{(1,0), \cdots, (j_M,i^{j_M}_M)} \Big) \Big( p^n_{1} \cdots p^n_{j_M} \Big) \Big( c^{n}_{0,0,0, \cdots, 0,0,0} \Big)
 \end{equation}
-Now, all the terms in ths equation are bounded between 0 and 1 and $p_1^n \rightarrow 0$ as $n \rightarrow \infty$. Therefore, $c^{n+1}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M} \rightarrow 0$, as well, and we have that all coefficients with at least one parameter having a single adaptive degree assigned to either thinning or widening vanish.
+Now, all the terms in this equation are bounded between 0 and 1 and $p_1^n \rightarrow 0$ as $n \rightarrow \infty$. Therefore, $c^{n+1}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M} \rightarrow 0$, as well, and we have that all coefficients with at least one parameter having a single adaptive degree assigned to either thinning or widening vanish.
 
-We will now prove the induction step, which states that if any coefficient with at least one parameter having at least one thinning or widening adaptive degree vanishes, then the coefficients for all proposals that it precedes by one time step (in the sense of the discussion of Equation 2.14) do as well. Consider $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$, which has at least one parameter with at least one thinning or widening adaptive degree. Equation 2.14 applied to this coefficient contains the coefficients for all possible preceding states. Now, since there is at least one degree of thinning or widening adaptation in the coefficient under consideration, every term in the sum from Equation 2.14 can be classified in one of two ways: either 1) that adaptation degree was obtained from the immediately preceding step or 2) from an earlier step. If it is from the immediately preceding step, we can factor out the appropriate probability term as we did for the base case, causing that term to vanish. If it was from an earlier step, then the proposal associated with that term already has at least one parameter with at least one thinning or widening adaptive degree, and thus---according to the induction hypothesis---vanishes. Having shown that every term in the sum vanishes, we have shown that all proposal coefficients with at least one parameter with at least one thinning or widening adaptive degree also vanish. Thus, the only non-vanishing coefficients are those for purely fixing proposals, which are all identical to the adaptation-less proposal. Therefore, the full proposal $Q^n \rightarrow q^{n}_{0,0,0, \cdots, 0,0,0}$ as $n \rightarrow \infty$, thus proving part ($b$) of Theorem \ref{ErgoThm}, i.e., diminishing adaptation. Therefore, having proven both ($a$) and ($b$), we have also proven the ergodicity of RSAP.
+We will now prove the induction step, which states that if any coefficient with at least one parameter having at least one thinning or widening adaptive degree vanishes, then the coefficients for all proposals that it precedes by one time step (in the sense of the discussion of Equation (\ref{recur})) do as well. Consider $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$, which has at least one parameter with at least one thinning or widening adaptive degree. Equation (\ref{recur}) applied to this coefficient contains the coefficients for all possible preceding states. Now, since there is at least one degree of thinning or widening adaptation in the coefficient under consideration, every term in the sum from Equation (\ref{recur}) can be classified in one of two ways: either 1) that adaptation degree was obtained from the immediately preceding step or 2) from an earlier step. If it is from the immediately preceding step, we can factor out the appropriate probability term as we did for the base case, causing that term to vanish. If it was from an earlier step, then the proposal associated with that term already has at least one parameter with at least one thinning or widening adaptive degree, and thus---according to the induction hypothesis---vanishes. Having shown that every term in the sum vanishes, we have shown that all proposal coefficients with at least one parameter with at least one thinning or widening adaptive degree also vanish. Thus, the only non-vanishing coefficients are those for purely fixing proposals, which are all identical to the adaptation-less proposal. Therefore, the full proposal $Q^n \rightarrow q^{n}_{0,0,0, \cdots, 0,0,0}$ as $n \rightarrow \infty$, thus proving part ($b$) of Theorem \ref{ErgoThm}, i.e., diminishing adaptation. Therefore, having proven both ($a$) and ($b$), we have also proven the ergodicity of RSAP.
 
 
 \section{Computational testing}
