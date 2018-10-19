@@ -176,12 +176,12 @@ Be specific about other methods, reference papers
 Yet another advantage that RSAP has over other more complicated adaptive methods is its trivial implementation and the minimal overhead it requires. Both the extra storage and computing time required for our method compared to standard Metropolis are negligible, since only several additional tuning parameters, counters, and scale factors must be stored and the adaptive scaling functions are computationally trivial to evaluate. Because of this, there is essentially no reason not to use RSAP as opposed to standard Metropolis.
 
 \subsection{The method}
-The key to the RSAP method is that it mixes a fixed-width Gaussian with two adaptable wide and thin Gaussians (one of each) into a single proposal. The thin option is included so that the chain can squeeze into tight optimal modes and the wide option so that the chain can both escape suboptimal modes and traverse state space quickly. The fixed option is included so that we always have a reasonable proposal to use in case the others adapt too much to be useful. With this reasoning in mind, the proposal for a single model parameter has the form of the linear combination
+The key to the RSAP method is that it mixes a fixed-width Gaussian with two adaptable wide and thin Gaussians (one of each) into a single proposal. The thin option is included so that the chain can squeeze into tight optimal modes and the wide option so that the chain can both escape suboptimal modes and traverse state space quickly. The fixed option is included so that we always have a reasonable control to use in case the others adapt ``too much" (which is unlikely given our constrants on the scaling). With this reasoning in mind, the proposal for a single model parameter has the form of the linear combination
 \begin{equation}
 	q^n(\theta'|\theta^n) = p_t^n N\big(\theta^n, (\sigma_t^n)^2\big) + p_f^n N\big(\theta^n, (\sigma_f)^2\big) + p_w^n N\big(\theta^n, (\sigma_w^n)^2\big)
 	\label{Prop1D}
 \end{equation}
-where $\sigma_t^n \le \sigma_f \le \sigma_w^n$ are the proposal widths and $0 \le p^n_t, p^n_f, p^n_w \le 1$ are the mixing probabilities. Every parameter uses separately adapting wide and thin proposal widths---allowing for independent adaptation of each---as well as its own fixed width (since the different parameters are likely different units/scales).
+where $\sigma_t^n \le \sigma_f \le \sigma_w^n$ are the proposal widths and $0 \le p^n_t, p^n_f, p^n_w \le 1$ are the mixing probabilities.
 \begin{figure}[!htb]
 	\centering
 	\minipage{0.5\textwidth}
@@ -192,8 +192,19 @@ where $\sigma_t^n \le \sigma_f \le \sigma_w^n$ are the proposal widths and $0 \l
 	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
 	\caption{RSAP proposal with $\sigma_t = 0.5, \sigma_f = 1.5, \sigma_w = 2.5, p_t = p_w = p_f = 1/3$.}
 \end{figure}
+Every parameter uses separately adapting wide and thin proposal widths---allowing for independent adaptation of each---as well as its own fixed width (since the different parameters likely have different units and/or scales).
 
-Concerning how we choose between the three options, we have the time-dependent probabilities $p_t^n, p_f^n, p_w^n$ that either the thin, fixed, or wide proposal (respectively) will be used. The following formulae govern the specific behavior of these probabilities.
+The values of $\sigma_{t}^n, \sigma_{w}^n$ adapt based on the number of recent consecutive rejections the chain has encountered, with their default values set to $\sigma_{f}$. If the candidate produced by the method is rejected, we choose from the three kernels based on the defined probability distribution. If the fixed kernel is chosen, then no adaptation is performed. However, if either the thin or wide kernels are used, then we increment one of the counters $k_{t}^n$, $k_{w}^n$ and compute the appropriate scale factor
+\begin{equation}
+	\begin{split}
+		A_{t}(k_{t}^n) & = 1 - (1- \hat A_{t})(1-\textrm{exp}(-r_{t} k_{t}^n))\\
+		A_{w}(k_{w}^n) & = 1 - (1- \hat A_{w})(1-\textrm{exp}(-r_{w} k_{w}^n))
+	\end{split}
+	\label{scaling}
+\end{equation}
+where $r_{w}>0$, $r_{t}>0$, $\hat A_{w}>1$, and $1>\hat A_{t}>0$. (These functions were chosen since their initial value is 1, their asymptotic limit is their respective $\hat A$ value, and their rate of convergence can be easily controlled via the $r$ constants.) We then set either $\sigma_{t}^n = A_{t}(k_{t}^n) \sigma_{f}$ or $\sigma_{w}^n = A_{w}(k_{w}^n) \sigma_{f}$ (depending on which was chosen) and perform a Metropolis step using this proposal width (again remembering that process is done independently for all parameters). On the other hand, whenever a candidate is accepted, the counters are reset to zero so that $\sigma_{t}^n = \sigma_{w}^n = \sigma_{f}$ (for all parameters).
+
+Now, concerning how we choose between the three options, we have the time-dependent probabilities $p_t^n, p_f^n, p_w^n$ that either the thin, fixed, or wide proposal (respectively) will be used. The following formulae govern the specific behavior of these probabilities.
 \begin{equation}
 	\begin{split}
 		p_f^n & = \left\{
@@ -209,25 +220,15 @@ Concerning how we choose between the three options, we have the time-dependent p
 	\label{mixing}
 \end{equation}
 The interval widths $n_1, n_2$ define three distinct regions for these functions. In the first region---which lasts $n_1$ steps---they describe a uniform distribution. In practice, $n_1$ should be set fairly large w.r.t. the total number of time steps $N$ so that RSAP has plenty of steps to utilize its adaptive features. The second region is a transition region---which lasts for $n_2$ steps---where proposal fixing begins to dominate the adaptation. The use of the cosine function here is somewhat arbitrary since many other monotonically increasing functions would produce similar results. From the definitions of $p_t^n, p_w^n$, there is an equal probability at each step that either thinning or widening will be chosen. There is no firm guideline for setting the second interval except $n_1 + n_2 \le N$. With the last region, we forced eventual convergence to $p_f^n \rightarrow 1$ as $n \rightarrow \infty$, and therefore ergodicity (see Section 2.3).
-
-Now, the values of $\sigma_{t}^n, \sigma_{w}^n$ adapt based on the number of recent consecutive rejections the chain has encountered, with their default values set to $\sigma_{f}$. If the candidate produced by the method is rejected, we choose from the three kernels based on the defined probability distribution. If the fixed kernel is chosen, then no adaptation is performed. However, if either the thin or wide kernels are used, then we increment one of the counters $k_{t}^n$, $k_{w}^n$ and compute the appropriate scale factor
-\begin{equation}
-	\begin{split}
-		A_{t}(k_{t}^n) & = 1 - (1- \hat A_{t})(1-\textrm{exp}(-r_{t} k_{t}^n))\\
-		A_{w}(k_{w}^n) & = 1 - (1- \hat A_{w})(1-\textrm{exp}(-r_{w} k_{w}^n))
-	\end{split}
-	\label{scaling}
-\end{equation}
-where $r_{w}>0$, $r_{t}>0$, $\hat A_{w}>1$, and $1>\hat A_{t}>0$. (These functions---which are identical in form to the probability functions above---were chosen since their initial value is 1, their asymptotic limit is their respective $\hat A$ value, and their rate of convergence can be easily controlled via the $r$ constants.) We then set either $\sigma_{t}^n = A_{t}(k_{t}^n) \sigma_{f}$ or $\sigma_{w}^n = A_{w}(k_{w}^n) \sigma_{f}$ (depending on which was chosen) and perform a Metropolis step using this proposal width (again remembering that process is done independently for all parameters). On the other hand, whenever a candidate is accepted, the counters are reset to zero so that $\sigma_{t}^n = \sigma_{w}^n = \sigma_{f}$ (for all parameters).
 \begin{figure}[!htb]
 	\centering
 	\minipage{0.5\textwidth}
 		\includegraphics[scale = 0.22]{ProposalPlot_Scaling}
 	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
 	\minipage{0.5\textwidth}
-		\includegraphics[scale = 0.27]{MixingProbabilities}
+		\includegraphics[scale = 0.22]{MixingProbabilities}
 	\endminipage\hfill %%%%%%%%%%%%%%%%%%%
-	\caption{Left: RSAP proposal-mixing probabilities \textnormal{(Equation (\ref{mixing}))} with $n_1 = 400, n_2 = 300$. Right: RSAP proposal-scaling functions \textnormal{(Equation (\ref{scaling}))} with $r_t , r_w = 0.3, A_t = 0.5, A_w = 5$.}
+	\caption{Left: RSAP proposal-scaling functions \textnormal{(Equation (\ref{scaling}))} with $r_t , r_w = 0.3, A_t = 0.5, A_w = 5$. Right: RSAP proposal-mixing probabilities \textnormal{(Equation (\ref{mixing}))} with $n_1 = 400, n_2 = 300$.}
 \end{figure}
 
 To derive the full $M$-parameter proposal (which we do in Section 2.3 with the help of a great deal of added notation), one has to consider all $3^M$ permutations of the $M$ parameters selecting the three different types of adaptation. It is helpful to do a two-parameter example. Each parameter will have its own set of proposal widths $\sigma_{t,m} < \sigma_{f,m} < \sigma_{w,m}$ ($m=1,2$). Upon adaptation, both parameters must choose which form of adaptation to apply, meaning there are $3^2$ possibilities for adaptation. Therefore, defining for the sake of notation $N(\theta_1, \sigma_1^2, \sigma_2^2)$ as a bivariate Gaussian distribution with diagonal covariance matrix given by the diagonal entries $(\sigma_1^2, \sigma_2^2)$, we can write the two-parameter proposal as (time step $n$ superscripts for $\sigma$'s omitted for space reasons)
@@ -292,11 +293,14 @@ We use a uniform prior over the given domain and a diagonal covariance matrix $\
 
 \subsection{Ergodicty of RSAP}
 We will now provide some analysis of the method, proving conditions $a$ and $b$ of Theorem 5 from Roberts and Rosenthal \cite{RRAdaptErgo} for our method, thereby showing its ergodicity. Theorem 5 states
+
+PLAGIARIZED???
+
 \begin{theorem}
 	Consider an adaptive MCMC algorithm, on a state space $\mathcal{X}$, with adaptation index $\mathcal{Y}$, so $\pi( \cdot )$ is stationary for each kernel $P_y$ for $y \in \mathcal{Y}$. Assume that:
 	\begin{tight_enum}
 		\item \textnormal{(Simultaneous Uniform Ergodicity)} For all $\epsilon > 0$, there $N = N(\epsilon) \in \mathbb{N}$ such that $||P^N_y(x, \cdot) - \pi(\cdot)|| \le \epsilon$ for all $x \in \mathcal{X}$ and $y \in \mathcal{Y}$.
-		\item \textnormal{(Diminishing Adaptation)} The limit $\lim_{n \rightarrow \infty} D_n = 0$ in probability, where $D_n = \sup_{x \in \mathcal{X}} ||P_{\Gamma_{n+1}}(x, \cdot) - P_{\Gamma_{n+1}}(x, \cdot)||$ is a $\mathcal{G}_{n+1}$-measurable random variable \textnormal{(}depending on the random values $\Gamma_n and \Gamma_{n+1}$\textnormal{)}.
+		\item \textnormal{(Diminishing Adaptation)} The limit $\lim_{n \rightarrow \infty} D_n = 0$ in probability, where $D_n = \sup_{x \in \mathcal{X}} ||P_{\Gamma_{n+1}}(x, \cdot) - P_{\Gamma_{n+1}}(x, \cdot)||$ is a $\mathcal{G}_{n+1}$-measurable random variable \textnormal{(}depending on the random values $\Gamma_n$ and $\Gamma_{n+1}$\textnormal{)}.
 	\end{tight_enum}
 	\hspace{15pt} Then the adaptive algorithm is ergodic.
 	\label{ErgoThm}
@@ -408,14 +412,15 @@ Now, to prove diminishing adaptation, we will show that the values of $c^{n}_{i^
 
 Let us first prove the base case, where we consider a proposal such that each parameter has only one adaptation degree assigned and there exists at least one parameter such that its mode of adaptation is either thinning or widening. Without loss of generality, we will say that this is the first parameter and that thinning was chosen (the widening case is identical).
 %Letting $c^{n}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M}$ be the coefficient of this proposal, this implies that either $i^1_m=1$ or $i_m^3=1$ for every $m = 2, \cdots, M$.
-Let $c^{n}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M}$ be the coefficient of this proposal.
-Then, using the recurrence relation, we get
+Let $c^{n}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M}$ be the coefficient of this proposal. Then, using the recurrence relation, we get
 \begin{equation}
 	c^{n+1}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M} = \Big( r^n_{(1,0), \cdots, (j_M,i^{j_M}_M)} \Big) \Big( p^n_{1} \cdots p^n_{j_M} \Big) \Big( c^{n}_{0,0,0, \cdots, 0,0,0} \Big)
 \end{equation}
 Now, all the terms in this equation are bounded between 0 and 1 and $p_1^n \rightarrow 0$ as $n \rightarrow \infty$. Therefore, $c^{n+1}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M} \rightarrow 0$, as well, and we have that all coefficients with at least one parameter having a single adaptive degree assigned to either thinning or widening vanish.
 
 We will now prove the induction step, which states that if any coefficient with at least one parameter having at least one thinning or widening adaptive degree vanishes, then the coefficients for all proposals that it precedes by one time step (in the sense of the discussion of Equation (\ref{recur})) do as well. Consider $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$, which has at least one parameter with at least one thinning or widening adaptive degree. Equation (\ref{recur}) applied to this coefficient contains the coefficients for all possible preceding states. Now, since there is at least one degree of thinning or widening adaptation in the coefficient under consideration, every term in the sum from Equation (\ref{recur}) can be classified in one of two ways: either 1) that adaptation degree was obtained from the immediately preceding step or 2) from an earlier step. If it is from the immediately preceding step, we can factor out the appropriate probability term as we did for the base case, causing that term to vanish. If it was from an earlier step, then the proposal associated with that term already has at least one parameter with at least one thinning or widening adaptive degree, and thus---according to the induction hypothesis---vanishes. Having shown that every term in the sum vanishes, we have shown that all proposal coefficients with at least one parameter with at least one thinning or widening adaptive degree also vanish. Thus, the only non-vanishing coefficients are those for purely fixing proposals, which are all identical to the adaptation-less proposal. Therefore, the full proposal $Q^n \rightarrow q^{n}_{0,0,0, \cdots, 0,0,0}$ as $n \rightarrow \infty$, thus proving part ($b$) of Theorem \ref{ErgoThm}, i.e., diminishing adaptation. Therefore, having proven both ($a$) and ($b$), we have also proven the ergodicity of RSAP.
+
+It is readily apparent that we took advantage of the ergodicity of Metropolis in order to prove the ergodicity of RSAP. In fact, the convergence of the mixing probabilities to $p_f^n \rightarrow 1$ essentially forces the method into Metropolis over time. We suspect, however, that RSAP might be ergodic without this condition on the mixing probabilities. Proving this would require showing that Equation (\ref{recur}) implies that the $c^n$'s converge in distribution. They certainly do not directly converge in value since they depend on the highly-stochastic acceptance/rejeciton probabilities; however, an argument can likely be made that this implies their convergence in distribution. We will leave this for a future paper since the current version of RSAP is sufficient.
 
 
 \section{Computational testing}
@@ -550,39 +555,12 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$.
 \end{algorithm}
 We sweep through $N_{width}$ proposal widths at equally-spaced intervals, i.e., $\sigma^i = i \sigma_{max} / (N_{width}-1)$ where $0 \le i \le N_{width}-1$.  Obviously, since RSAP adapts the proposal width, we will be sweeping through its \textit{fixed} proposal width, letting these values also equal the widths for Metropolis.  We say ``widths" rather than ``covariance matrices" since---for the Ackley function---each parameter axis is scaled equally, thus causing a single width to work for each. For every width value, we run $N_{chains}$, each for $N_{steps}$, with initial states that are uniformly-distributed across the cubical domain. The cumulative probability of convergence to the global minimum of the Ackely function versus the time-step is then calculated for each width by determining at which time-step each chain's Ackley evaluation is below the threshold $\varepsilon$.
 
-Let us note two more considerations before presenting the results. Since we are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing us in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but poor for getting accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, we will restrict ourselves to only small values of $\Delta$.
+Let us note two more considerations before presenting the results. Since we are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing us in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but not necessarily ideal for accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, we will restrict ourselves to only small values of $\Delta$.
 
 Now, let us examine the results of our numerical tests.
 %%% AM TITLE IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %%% AM TITLE IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %%% AM TITLE IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-% 3D
-\begin{comment}
-\begin{figure}[!htb]
-\minipage{0.333\textwidth}
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_AdaF.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_AdaF.jpg}
-\endminipage\hfill %%%%%%%%%%%%%%%%%%%
-\minipage{0.333\textwidth}
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AM.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_Diff.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_Diff.jpg}
-\endminipage\hfill %%%%%%%%%%%%%%%%%%%
-\minipage{0.333\textwidth}
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_01_AdaT.jpg}
-\\
-\includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_02_AdaT.jpg}
-\endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left column), RSAP (center column), and their difference (right column) performed on a 3D Ackley function. We used $\Delta = 0.01$ (top row), $\Delta = 1.0$ (center row), and $\Delta = 2.0$ (bottom row). We also used 500 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^3$.}
-\end{figure}
-\end{comment}
 \begin{figure}[!htb]
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaF.jpg}
@@ -593,14 +571,6 @@ Now, let us examine the results of our numerical tests.
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_003D_00_AdaT.jpg}
 \endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D Ackley function. We used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$.}
-\end{figure}
-Figure 5 contains the results of a comparison between Metropolis, Adaptive Metropolis, and RSAP on a 3D Ackley function. There are several features which must be discussed. First, we notice that both Metropolis and RSAP have similarly shaped convergence profiles, with the fastest rate of convergence happening near some particular optimal value of the proposal width and a tapering off as the width is increased or decreased. The main differences between the two are 1) that RSAP's optimal width is slightly less than that of Metropolis and, more obviously, 2) that RSAP's convergence rate is significantly higher than Metropolis's for all width values. On the other hand, the convergence profile for AM is quite different, with the transition into the adaptive regime being very clearly visible. Since AM's width (or covariance matrix) should converge to the same value(s) no matter the initial value(s), we see similar performance across a wide range of initial widths. Also, though AM's convergence does have an optimal width value, it is much more forgiving than the other two methods when using too large of a width. However, RSAP is still able to perform well when given widths which are too small for Metropolis or AM. Considering just these small width values, it is reasonable for Metropolis and AM to stagnate on the Ackley function if given too small a width. Each trough in the Ackley function has a width of 1.0 between adjacent modes. This is due to the cos$(2 \pi \theta_m)$ term. Now, for a Gaussian distribution, 99.7\% of samples drawn will be within $3 \sigma$ of the mean. Therefore, letting $1.0 = 3 \sigma$, we see that a width of 0.333 will only draw samples outside of a particular trough 0.3\% of the time (assuming that the mean is approximately at the center of the trough, which is reasonable since it will be attracted to that location). If Metropolis were to use such a small width, it would have a very small chance to escape. Similarly for AM, if its estimation of the optimal width ever became this small, drawing further samples from within the trough would only serve to \textit{decrease} the width estimate even further (AM would have a better chance of escaping such a trough in a low number of dimensions since the coefficient $2.38^2/d > 1$, thus causing the width value to be large than 0.333). Looking back to Figure 5, we see no convergence in Metropolis or AM for width values at or below 0.333, with AM actually performing worse than standard Metropolis. On the other hand, due to RSAP's ability to both grow and shrink the width, it still converges well within this region.
-
-% It is also clear how significant the effect of changing the value of $\Delta$ can be, with a value of 0.01 (top row) performing notably superior to 2.0 (bottom row). For both methods, lower $\Delta$ will allow the chains to drift more easily into sub-optimal regions, thus slowing the burn-in process. As stated before, this problem is compounded for RSAP since it depends on rejections to operate effectively.
-
-Next, in Figure 6, we have a comparison over a 10D Ackley function.
-\begin{figure}[!htb]
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaF.jpg}
 \endminipage\hfill %%%%%%%%%%%%%%%%%%%
@@ -610,12 +580,6 @@ Next, in Figure 6, we have a comparison over a 10D Ackley function.
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_010D_00_AdaT.jpg}
 \endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 10D Ackley function. We used $N_{brun} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$.}
-\end{figure}
-Note the scale of the axes has changed dramatically from Figure 5, since a 10D space requires more time-steps to explore and the optimal width decreases \cite{SigScale}. In spite of the change of scale, the shape of the three methods' convergence profiles remains similar to their low-dimensional counterparts, with Metropolis and RSAP have a clear optimal width and AM have roughly equal performance across a range of widths. Just as in Figure 5, it is now quite noticable that the optimal width for RSAP is less than that for Metropolis. Also, for most widths, RSAP completely dominates Metropolis. Interestingly, RSAP and AM seem to have complementary convergence regions (at least up to 5000 steps).
-
-Finally, we have a comparison over a 20D Ackley function (note that the axes' scales have changed again).
-\begin{figure}[!htb]
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_020D_00_AdaF.jpg}
 \endminipage\hfill %%%%%%%%%%%%%%%%%%%
@@ -625,9 +589,26 @@ Finally, we have a comparison over a 20D Ackley function (note that the axes' sc
 \minipage{0.333\textwidth}
 \includegraphics[width=\linewidth]{UQPlot_ConvWidth_Ackley_020D_00_AdaT.jpg}
 \endminipage\hfill
-\caption{Plots of the cumulative convergence of Metropolis (left), RSAP (center), and their difference (right) performed on a 20D Ackley function. We used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}
+\caption{Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D (top), 10D (center), 20D (bottom) Ackley function. For 3D, we used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$. For 10D, we used $N_{burn} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$. For 20D, we used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}
+\label{cumul}
 \end{figure}
-For this test, we shrunk the domain from $[-15.0,15.0]^{20}$ to $[-10.0,10.0]^{20}$ and decreased $\Delta_0$ by a factor of 10. Though it is difficult to tell from the image, there was zero convergence from any of the Metropolis \textit{or} Adaptive Metropolis chains within the prescribed number of steps. RSAP, on the other hand, still performed quite well, though the range of quickly-converging widths has been greatly compressed. From this plot, it is clear that the convergence rate of Metropolis and AM in high-dimensional spaces pales in comparison to that of RSAP.
+Figure \ref{cumul} contains the results of a comparison between Metropolis, Adaptive Metropolis, and RSAP on an Ackley function in 3, 10, and 20 dimensions. For the 3D case, there are several features which must be discussed. First, we notice that both Metropolis and RSAP have similarly shaped convergence profiles, with the fastest rate of convergence happening near some particular optimal value of the proposal width and a tapering off as the width is increased or decreased. The main differences between the two are 1) that RSAP's optimal width is slightly less than that of Metropolis and, more obviously, 2) that RSAP's convergence rate is significantly higher than Metropolis's for all width values.
+
+On the other hand, the convergence profile for AM is quite different, with the transition into the adaptive regime being very clearly visible. Since AM's width (or covariance matrix) should converge to the same value(s) no matter the initial value(s), we see similar performance across a wide range of initial widths. Also, though AM's convergence does have an optimal width value, it is much more forgiving than the other two methods when using too large of a width. However, RSAP is still able to perform well when given widths which are too small for Metropolis or AM. Considering just these small width values, it is reasonable for Metropolis and AM to stagnate on the Ackley function if given too small a width. Each trough in the Ackley function has a width of 1.0 between adjacent modes. This is due to the cos$(2 \pi \theta_m)$ term. Now, for a Gaussian distribution, 99.7\% of samples drawn will be within $3 \sigma$ of the mean. Therefore, letting $1.0 = 3 \sigma$, we see that a width of 0.333 will only draw samples outside of a particular trough 0.3\% of the time (assuming that the mean is approximately at the center of the trough, which is reasonable since it will be attracted to that location). If Metropolis were to use such a small width, it would have a very small chance to escape. Similarly for AM, if its estimation of the optimal width ever became this small, drawing further samples from within the trough would only serve to \textit{decrease} the width estimate even further (AM would have a better chance of escaping such a trough in a low number of dimensions since the coefficient $2.38^2/d > 1$, thus causing the width value to be large than 0.333). Looking back to Figure 5, we see no convergence in Metropolis or AM for width values at or below 0.333, with AM actually performing worse than standard Metropolis. On the other hand, due to RSAP's ability to both grow and shrink the width, it still converges well within this region.
+
+
+
+% It is also clear how significant the effect of changing the value of $\Delta$ can be, with a value of 0.01 (top row) performing notably superior to 2.0 (bottom row). For both methods, lower $\Delta$ will allow the chains to drift more easily into sub-optimal regions, thus slowing the burn-in process. As stated before, this problem is compounded for RSAP since it depends on rejections to operate effectively.
+
+Next, in Figure (??) (10D), we have a comparison over a 10D Ackley function.
+Note the scale of the axes has changed dramatically from Figure 5, since a 10D space requires more time-steps to explore and the optimal width decreases \cite{SigScale}. In spite of the change of scale, the shape of the three methods' convergence profiles remains similar to their low-dimensional counterparts, with Metropolis and RSAP have a clear optimal width and AM have roughly equal performance across a range of widths. Just as in Figure 5, it is now quite noticable that the optimal width for RSAP is less than that for Metropolis. Also, for most widths, RSAP completely dominates Metropolis. Interestingly, RSAP and AM seem to have complementary convergence regions (at least up to 5000 steps).
+
+Finally (20D), we have a comparison over a 20D Ackley function (note that the axes' scales have changed again). For this test, we shrunk the domain from $[-15.0,15.0]^{20}$ to $[-10.0,10.0]^{20}$ and decreased $\Delta_0$ by a factor of 10. Though it is difficult to tell from the image, there was zero convergence from any of the Metropolis \textit{or} Adaptive Metropolis chains within the prescribed number of steps. RSAP, on the other hand, still performed quite well, though the range of quickly-converging widths has been greatly compressed. From this plot, it is clear that the convergence rate of Metropolis and AM in high-dimensional spaces pales in comparison to that of RSAP.
+
+% TABLE:
+% average convergecne across a single time slice at 25%, 50%, 75%, 100% of total runtime (for each dimensionality: 3 tables)
+% text
+
 
 \begin{comment}
 Use this as impetus for convergence vs. width graphs:
@@ -638,7 +619,9 @@ From Haario AP:
 
 
 \section{Conclusions}
-From both our analytical and experimental results, it is clear that RSAP deserves a well-earned a place in the vast marketplace of adaptive MCMC methods. Though it performs well in low-dimensions, its true power is fast convergence in high-dimensional, multimodal spaces. The obvious next steps to be taken in our future work is to combine RSAP (or a variant with slightly different adaptation rules or scaling functions) with AM in such a way that we get the fast convergence of RSAP along with the consistent convergence across a wide range of widths of AM. We ucrrently have in mind several techniques for accomplishing this and we hope to test them as soon as possible.
+From both our analytical and experimental results, it is clear that RSAP deserves a well-earned a place in the vast marketplace of adaptive MCMC methods. Though it performs at an average rate in low-dimensions, its true power lies in its fast convergence in high-dimensional, multimodal spaces.
+
+There are several modifications and applications of RSAP which we would like to investigate in future work. Certainly, different adaptation rules---such as decrementing instead of reseting upon acceptance, scaled incrementing/decrementing based on the acceptance rate, or some type of stochastic incrementing---would be an interesting topic. We also have several ideas on how to combine RSAP and AM in such a way that the resulting method will have the fast convergence of RSAP along with the consistent convergence across a wide range of widths of AM. Lastly, we have an excellent application for RSAP which involves the parameter estimation/best-fit modeling of galaxy mergers. This has been on ongoing project for a number of years now and the application of RSAP will allow us to automate portions of the workflow which currently take a large number of man-hours to complete.
 
 \begin{comment}
 Further work:
@@ -657,7 +640,6 @@ Alter RSAP by changing adaptation rules and counters:
 \end{comment}
 
 
-
 %%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%
 %%%%% THE END %%%%%
@@ -665,8 +647,7 @@ Alter RSAP by changing adaptation rules and counters:
 %%%%%%%%%%%%%%%
 
 \section*{Acknowledgments}
-We would like to acknowledge the assistance of volunteers in putting
-together this example manuscript and supplement.
+We would like to acknowledge...
 
 \bibliographystyle{siamplain}
 \bibliography{references}
