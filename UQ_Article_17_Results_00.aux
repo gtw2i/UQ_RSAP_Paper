@@ -28,57 +28,60 @@
 \citation{Hastings}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Metropolis}{2}{subsection.2}}
 \citation{GelmanBayes}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1.1}{\ignorespaces The Metropolis method}}{3}{algorithm.10}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1.1}{\ignorespaces The Metropolis method}}{3}{algorithm.9}}
 \citation{RRAdaptErgo}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Kernel mixing and composition}{4}{subsection.13}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Adaptive MCMC}{4}{subsection.14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Kernel mixing and composition}{4}{subsection.10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Adaptive MCMC}{4}{subsection.11}}
 \citation{HaarioAP}
 \citation{HaarioAM}
 \citation{AM_RR}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Rejection-scaled adaptive proposal (RSAP)}{5}{section.17}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Motivation and advantages}{5}{subsection.18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}The method}{6}{subsection.19}}
-\newlabel{Prop1D}{{2.1}{6}{The method}{equation.20}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Rejection-scaled adaptive proposal (RSAP)}{5}{section.12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Motivation and advantages}{5}{subsection.13}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}The method}{6}{subsection.14}}
+\newlabel{Prop1D}{{2.1}{6}{The method}{equation.15}{}}
 \newlabel{Prop1D@cref}{{[equation][1][2]2.1}{6}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RSAP proposal with $\sigma _t = 0.5, \sigma _f = 1.5, \sigma _w = 2.5, p_t = p_w = p_f = 1/3$.}}{6}{figure.21}}
-\newlabel{scaling}{{2.2}{7}{The method}{equation.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RSAP proposal (Equation (\ref  {Prop1D})) with $\sigma _t = 0.5, \sigma _f = 1.5, \sigma _w = 2.5, p_t = p_w = p_f = 1/3$.}}{6}{figure.16}}
+\newlabel{scaling}{{2.2}{7}{The method}{equation.18}{}}
 \newlabel{scaling@cref}{{[equation][2][2]2.2}{7}}
-\newlabel{mixing}{{2.3}{7}{The method}{equation.24}{}}
+\newlabel{mixing}{{2.3}{7}{The method}{equation.19}{}}
 \newlabel{mixing@cref}{{[equation][3][2]2.3}{7}}
 \citation{RRAdaptErgo}
 \citation{RRAdaptErgo}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Left: RSAP proposal-scaling functions \textnormal  {(Equation (\ref  {scaling}))} with $r_t , r_w = 0.3, A_t = 0.5, A_w = 5$. Right: RSAP proposal-mixing probabilities \textnormal  {(Equation (\ref  {mixing}))} with $n_1 = 400, n_2 = 300$.}}{8}{figure.25}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Ergodicty of RSAP}{8}{subsection.53}}
-\@writefile{thm}{\contentsline {theorem}{{Theorem}{2.1}{}}{8}{theorem.54}}
-\newlabel{ErgoThm}{{2.1}{8}{Ergodicty of RSAP}{Item.56}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Left: RSAP proposal-scaling functions \textnormal  {(Equation (\ref  {scaling}))} with $r_t , r_w = 0.3, A_t = 0.5, A_w = 5$. Right: RSAP proposal-mixing probabilities \textnormal  {(Equation (\ref  {mixing}))} with $n_1 = 400, n_2 = 300$.}}{8}{figure.20}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Ergodicty of RSAP}{8}{subsection.47}}
+\@writefile{thm}{\contentsline {theorem}{{Theorem}{2.1}{}}{8}{theorem.48}}
+\newlabel{ErgoThm}{{2.1}{8}{Ergodicty of RSAP}{Item.50}{}}
 \newlabel{ErgoThm@cref}{{[theorem][1][2]2.1}{8}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {2.1}{\ignorespaces Rejection-scaled adaptive proposal (RSAP)}}{9}{algorithm.52}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Proving diminishing adaptation}{9}{subsubsection.57}}
-\newlabel{adaPro}{{2.7}{10}{Proving diminishing adaptation}{equation.60}{}}
-\newlabel{adaPro@cref}{{[equation][7][2]2.7}{10}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces A graphical depiction of the method and the possible transitions that can take place. At any node (proposal distribution) in the graph, four transitions can occur: increasing one of the three indices (rejection) or returning to the initial state (acceptance). Note that we have omitted the time step superscript since to properly represent the method graphically would require another dimension to represent time. We instead identify all the proposals with the same adaptation degrees and simply use primes to denote the fact that they represent numerous other proposals with equivalent adaptation degrees but larger time step superscripts.}}{11}{figure.62}}
-\newlabel{exQ}{{2.9}{11}{Proving diminishing adaptation}{equation.64}{}}
-\newlabel{exQ@cref}{{[equation][9][2]2.9}{11}}
-\newlabel{recur}{{2.14}{12}{Proving diminishing adaptation}{equation.69}{}}
-\newlabel{recur@cref}{{[equation][14][2]2.14}{12}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Computational testing}{14}{section.71}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Discussion of RSAP and modified AM parameter values used in testing}{14}{subsection.72}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Chain mixing}{15}{subsection.74}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plots of the Gaussian function, chain trace, and binned posterior estimate resulting from a run with 5,000 steps. In the trace plot in the center, the blue curve is the actual chain and red curve contains the only points with the highest posterior values up to the current time step. For the posterior plot on the right, we used 45 bins to get the image for the posterior distribution.}}{15}{figure.76}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Plots of an Ackley function, chain trace, and binned posterior estimate resulting from a run with 5,000 steps.}}{16}{figure.79}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Plots of the bimodal function, chain trace, and binned posterior estimate resulting from an RSAP run with 5,000 steps.}}{16}{figure.82}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Convergence to global minimum}{16}{subsection.84}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {3.1}{\ignorespaces Test for convergence to global max}}{17}{algorithm.106}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D (top), 10D (center), 20D (bottom) Ackley function. For 3D, we used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$. For 10D, we used $N_{burn} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$. For 20D, we used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}}{18}{figure.107}}
-\newlabel{cumul}{{7}{18}{Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D (top), 10D (center), 20D (bottom) Ackley function. For 3D, we used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$. For 10D, we used $N_{burn} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$. For 20D, we used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$}{figure.107}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2.1}{\ignorespaces Rejection-scaled adaptive proposal (RSAP)}}{9}{algorithm.46}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Proving diminishing adaptation}{9}{subsubsection.51}}
+\newlabel{adaPro}{{2.4}{10}{Proving diminishing adaptation}{equation.52}{}}
+\newlabel{adaPro@cref}{{[equation][4][2]2.4}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces A graphical depiction of RSAP and the possible transitions that can take place. At any node (\textit  {adaptive} proposal) in the graph, four transitions can occur: increasing one of the three indices (rejection) or returning to the initial state (acceptance). Note that we have omitted the time step superscript since to properly represent the method graphically would require another dimension to represent time. We instead identify all the proposals with the same adaptation degrees and simply use primes to denote the fact that they represent numerous other proposals with equivalent adaptation degrees but larger time step superscripts.}}{11}{figure.53}}
+\newlabel{exQ}{{2.5}{11}{Proving diminishing adaptation}{equation.55}{}}
+\newlabel{exQ@cref}{{[equation][5][2]2.5}{11}}
+\newlabel{recur}{{2.6}{12}{Proving diminishing adaptation}{equation.56}{}}
+\newlabel{recur@cref}{{[equation][6][2]2.6}{12}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Computational testing}{14}{section.57}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Discussion of RSAP and modified AM parameter values used in testing}{14}{subsection.58}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Chain mixing}{15}{subsection.59}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plots of the Gaussian function (left), chain trace (center), and binned posterior estimate (right) resulting from a run with 5,000 steps. For the posterior plot on the right, we used 50 bins, giving a bin width of 0.04.}}{15}{figure.60}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Plots of the Ackley function (left), chain trace (center), and binned posterior estimate (right) resulting from a run with 5,000 steps. For the posterior plot on the right, we used 50 bins, giving a bin width of 0.4.}}{16}{figure.62}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Plots of the bi-modal function (left), chain trace (center), and binned posterior estimate (right) resulting from a run with 5,000 steps. For the posterior plot on the right, we used 50 bins, giving a bin width of 0.04.}}{16}{figure.64}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Convergence to global minimum}{16}{subsection.66}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3.1}{\ignorespaces Test for convergence to global max}}{17}{algorithm.87}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D (top), 10D (center), 20D (bottom) Ackley function. For 3D, we used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$. For 10D, we used $N_{burn} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$. For 20D, we used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$.}}{18}{figure.88}}
+\newlabel{cumul}{{7}{18}{Plots of the cumulative convergence of Metropolis (left), Adaptive Metropolis (center), and RSAP (right) performed on a 3D (top), 10D (center), 20D (bottom) Ackley function. For 3D, we used $N_{burn} = 250$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{3}$. For 10D, we used $N_{burn} = 2000$, $\Delta = 0.01$, 5000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-15.0,15.0]^{10}$. For 20D, we used $N_{burn} = 5000$, $\Delta = 0.001$, 10000 time-steps per chain, 500 chains per width value, and threshold of 1.0 over the domain $[-10.0,10.0]^{20}$}{figure.88}{}}
 \newlabel{cumul@cref}{{[figure][7][]7}{18}}
-\citation{SigScale}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Numeric convergence data from Figure \ref  {cumul}. Values are the maximum fraction of converging runs over all the different proposal widths used.}}{19}{table.109}}
-\newlabel{data}{{1}{19}{Numeric convergence data from Figure \ref {cumul}. Values are the maximum fraction of converging runs over all the different proposal widths used}{table.109}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Numeric convergence data from Figure \ref  {cumul}. The values are the maximum fraction of converging runs across 4 different time-slices of Figure \ref  {cumul} (i.e., the maximum is taken over the range of proposal widths used). The data is grouped by the method used (rows), as well as dimensionality of the problem (columns) and run-time completion percentage (columns). Values were rounded to the nearest hundredth.}}{19}{table.90}}
+\newlabel{data}{{1}{19}{Numeric convergence data from Figure \ref {cumul}. The values are the maximum fraction of converging runs across 4 different time-slices of Figure \ref {cumul} (i.e., the maximum is taken over the range of proposal widths used). The data is grouped by the method used (rows), as well as dimensionality of the problem (columns) and run-time completion percentage (columns). Values were rounded to the nearest hundredth}{table.90}{}}
 \newlabel{data@cref}{{[table][1][]1}{19}}
+\citation{SigScale}
+\citation{jspam}
+\citation{citizen}
 \bibstyle{siamplain}
 \bibdata{references}
 \bibcite{RWM}{1}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{20}{section.92}}
 \bibcite{Hastings}{2}
 \bibcite{Metro}{3}
 \bibcite{GelmanBayes}{4}
@@ -89,7 +92,5 @@
 \bibcite{AM_RR}{9}
 \bibcite{SigScale}{10}
 \bibcite{Interact}{11}
-\bibcite{citizen}{12}
-\bibcite{galaxyFE}{13}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{20}{section.111}}
-\bibcite{jspam}{14}
+\bibcite{jspam}{12}
+\bibcite{citizen}{13}

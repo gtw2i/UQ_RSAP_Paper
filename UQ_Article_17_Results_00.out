@@ -1,14 +1,14 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
 \BOOKMARK [2][-]{subsection.2}{Metropolis}{section.1}% 2
-\BOOKMARK [2][-]{subsection.13}{Kernel mixing and composition}{section.1}% 3
-\BOOKMARK [2][-]{subsection.14}{Adaptive MCMC}{section.1}% 4
-\BOOKMARK [1][-]{section.17}{Rejection-scaled adaptive proposal \(RSAP\)}{}% 5
-\BOOKMARK [2][-]{subsection.18}{Motivation and advantages}{section.17}% 6
-\BOOKMARK [2][-]{subsection.19}{The method}{section.17}% 7
-\BOOKMARK [2][-]{subsection.53}{Ergodicty of RSAP}{section.17}% 8
-\BOOKMARK [3][-]{subsubsection.57}{Proving diminishing adaptation}{subsection.53}% 9
-\BOOKMARK [1][-]{section.71}{Computational testing}{}% 10
-\BOOKMARK [2][-]{subsection.72}{Discussion of RSAP and modified AM parameter values used in testing}{section.71}% 11
-\BOOKMARK [2][-]{subsection.74}{Chain mixing}{section.71}% 12
-\BOOKMARK [2][-]{subsection.84}{Convergence to global minimum}{section.71}% 13
-\BOOKMARK [1][-]{section.111}{Conclusions}{}% 14
+\BOOKMARK [2][-]{subsection.10}{Kernel mixing and composition}{section.1}% 3
+\BOOKMARK [2][-]{subsection.11}{Adaptive MCMC}{section.1}% 4
+\BOOKMARK [1][-]{section.12}{Rejection-scaled adaptive proposal \(RSAP\)}{}% 5
+\BOOKMARK [2][-]{subsection.13}{Motivation and advantages}{section.12}% 6
+\BOOKMARK [2][-]{subsection.14}{The method}{section.12}% 7
+\BOOKMARK [2][-]{subsection.47}{Ergodicty of RSAP}{section.12}% 8
+\BOOKMARK [3][-]{subsubsection.51}{Proving diminishing adaptation}{subsection.47}% 9
+\BOOKMARK [1][-]{section.57}{Computational testing}{}% 10
+\BOOKMARK [2][-]{subsection.58}{Discussion of RSAP and modified AM parameter values used in testing}{section.57}% 11
+\BOOKMARK [2][-]{subsection.59}{Chain mixing}{section.57}% 12
+\BOOKMARK [2][-]{subsection.66}{Convergence to global minimum}{section.57}% 13
+\BOOKMARK [1][-]{section.92}{Conclusions}{}% 14
