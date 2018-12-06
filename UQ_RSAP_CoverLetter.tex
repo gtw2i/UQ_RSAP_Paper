@@ -1,0 +1,101 @@
+% basic cover letter template
+\documentclass{letter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{textpos}
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{algorithmic}
+\usepackage{verbatim}
+\usepackage{textcomp}
+\usepackage{varwidth}
+\usepackage[linesnumbered,ruled]{algorithm2e}
+
+%\usepackage{amssymb,amsmath}
+%\usepackage{graphicx}
+
+\oddsidemargin=.2in
+\evensidemargin=.2in
+\textwidth=5.9in
+\topmargin=-.5in
+\textheight=9in
+
+%\address{Mathematics Department\\University of Illinois\\
+%1409 W. Green St\\Urbana, Illinois 61801}
+
+\newcommand {\qed}{\mbox{$\Box$}}
+\renewcommand {\iff}{\Longleftrightarrow}
+\newcommand {\R}{\mathbb{R}}
+\newcommand {\N}{\mathbb{N}}
+\newcommand {\Q}{\mathbb{Q}}
+\newcommand {\Z}{\mathbb{Z}}
+\newcommand {\sub}{\mbox{SB}}
+
+%%%%%%%%%%%%
+%%%%  BEGIN  %%%%
+%%%%%%%%%%%%
+\begin{document}
+
+\begin{letter}{
+Graham West \\
+PhD Program in Computational Science \\
+Middle Tennessee State University \\
+1301 East Main Street, Campus Box 71 \\
+Murfreesboro, TN, 37132
+}
+
+\begin{comment}
+
+Questions:
+
+Too much "simple" in second paragraph
+
+
+\end{comment}
+
+\opening{Dear Editor,}
+This letter is to request the publication of our article ``RSAP: an adaptive Metropolis algorithm with rejection-based Gaussian proposal-scaling for fast convergence in multimodal parameter spaces" in SIAM's Journal on Uncertainty Quantification.
+
+In our paper, we offer the new adaptive MCMC method RSAP (rejection-scaled adaptive proposal) which is based on several simple ideas and assumptions yet performs at a very robust and efficient level. By assuming that a rejection implies that the current proposal width is not optimal, we give the proposal the ability to grow, shrink or stay the same in order to find a more ideal width. Since it is not possible to know which of these options should be chosen at a given step, we randomly select from the three options. Due to the striking simplicity of this adaptation scheme, implementation is nearly trivial. More importantly, our method performs at an excellent level in high-dimensional and multimodal parameter spaces, outperforming the standard Metropolis and adaptive Metropolis methods in the various test cases we developed.
+
+We believe that the Journal of Uncertainty Quantification would be the ideal place for our paper and any subsequent, related papers in the future. Its healthy mixture of method-focused papers as well as application-based research offers many avenues for us to expand our research in the future, whether in improvements to RSAP or its application to specific scientific problems.
+
+There are no conflicts of interest to report regarding this paper. We have neither previously published this material or submitted it to any other journal for review. 
+
+Thank you for your consideration.
+
+\closing{Sincerely,}
+
+
+\minipage{0.47\textwidth}
+Graham West \\
+PhD Program in Computational Science \\
+Middle Tennessee State University \\
+1301 East Main Street, Campus Box 71 \\
+Murfreesboro, TN, 37132 \\
+(615) 478-4033 (cell) \\
+gtw2i@mtmail.mtsu.edu \\
+\endminipage\hfill
+\minipage{0.53\textwidth}
+Dr. John Wallin \\
+Director, PhD Program in Computational Science \\
+Middle Tennessee State University \\
+1301 East Main Street, Campus Box 71 \\
+Murfreesboro, TN, 37132 \\
+(615) 494-7735 (office) \\
+jwallin@mtsu.edu \\
+\endminipage\hfill
+
+
+
+\end{letter}
+
+
+
+\end{document}
+

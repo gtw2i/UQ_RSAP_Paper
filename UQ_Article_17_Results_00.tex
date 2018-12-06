@@ -44,7 +44,7 @@
 % REQUIRED
 \begin{abstract}
 Performing MCMC parameter estimation on complex, nonlinear mathematical models can quickly lead to endless searching through highly multimodal parameter spaces. If one does not know the optimal proposal distribution, the burn-in period can take an excessively long time, due to the Markov chain inefficiently mixing and becoming trapped near a suboptimal mode. Also, if the model of interest is very computationally expensive, one would prefer to evaluate it as few times as possible. With these challenges in mind, we present in this paper a new adaptive Metropolis method called RSAP (rejection-scaled adaptive proposal) which can grow and shrink the scale of the Gaussian proposal width (independently for each parameter) based on the number of consecutive rejections the chain has encountered. The method is flexible and robust enough to handle parameter spaces that are both high-dimensional and multimodal. % (and correlated???).   I don't think this is needed.
-Other advantages include not having to locate a near-optimal with a different method beforehand, as well as requiring almost zero computational or storage overhead from standard Metropolis. It also solves the issue of the unknown optimal proposal width by adjusting it over time. We will provide a proof of its ergodicity and conclude with comprehensive computational results implementing this method on several benchmark optimization functions, comparing its convergence to that of the standard Metropolis method and a modified version of Adaptive Metropolis \cite{AM_RR}.
+Other advantages include not having to locate a near-optimal mode with a different method beforehand, as well as requiring minimal computational and storage overhead from standard Metropolis. It also solves the issue of the unknown optimal proposal width by adjusting it over time. We will provide a proof of its ergodicity and conclude with comprehensive computational results implementing this method on several benchmark optimization functions, comparing its convergence to that of the standard Metropolis method and a modified version of Adaptive Metropolis \cite{AM_RR}.
 \end{abstract}
 
 % REQUIRED
@@ -62,13 +62,13 @@ Markov chain Monte Carlo, adaptive MCMC methods, parameter estimation, ergodicit
 \section{Introduction}
 Markov chain Monte Carlo (MCMC) methods provide one of the most widely-used and easily accessible solution techniques to the problem of model parameter estimation (PE). As the name suggests, MCMC algorithms use Markov chains to sample the state space of the model being studied, thus obtaining distributions for all of its relevant parameters. With an ever-growing number of MCMC method types---from interacting forests of chains to delayed rejection techniques which approximate a full model evaluation---a suitable method can be found for virtually every problem.
 
-This paper is outlined in the following way. First, we open with a review of the original Metropolis method, as well as a discussion on how kernel mixing and adaptive methods are able to increase its performance. Next, we will discuss our own adaptive kernel mixing method RSAP and the motivating factors for using it, as well as provide a proof of its ergodicity. Lastly, we will present and interpret results of experiments performed on our method using common optimization benchmark functions (including Gaussian and Ackley functions as well as a flattened bi-modal function), going into detail in comparing our method's performance with that of standard Metropolis \cite{Metro} as well as Adaptive Metropolis \cite{AM_RR} over a range of proposal widths.
+This paper is outlined in the following way. First, we open with a review of the original Metropolis method, as well as a discussion on how kernel mixing and adaptive methods are able to increase its performance. Next, we will discuss our own adaptive kernel mixing method RSAP and the motivating factors for using it, as well as provide a proof of its ergodicity. We then present and interpret results of experiments performed on our method using common optimization benchmark functions, including Gaussian and Ackley functions as well as a flattened bi-modal function. We include in our results a new type of test that we developed which is able to determine and compare the short-term convergence to the posterior's global maximum for several methods in an easy-to-interpret format. We conclude the paper with some notes on extensions and modifications to RSAP which will likely be contained in a future paper, as well as an application in the field of galactic merger simulation (which will also be a future paper).
 
 
 \subsection{Metropolis}
 One of the most well-known and widely-used MCMC techniques is the original Metropolis method. First developed by Metropolis et al. \cite{Metro} and later generalized by Hastings \cite{Hastings}, this simple method has been the foundation for countless new and improved versions that have continued to build on the basic principles found within their predecessor.
 
-Given data that we wish for the model to fit, the Metropolis method attempts to sample a distribution over the model parameters called the \textit{posterior}. This distribution will have a peak at the values of the model parameters which best approximate the data. However, we do not know the posterior since we cannot directly invert the parameter-data relationship (and since to do so would be to know the solution to the problem). Therefore, we must express it in terms of distributions which we do know. From Bayes's Theorem, we have the following proportionality relation (given data $y$ and model parameters $\theta$)
+Given data that we wish for the model to fit, the Metropolis method attempts to sample a distribution over the model parameters called the \textit{posterior} which describes the probability of the model parameters given the data. This distribution will have a peak at the values of the model parameters which best approximate the data. However, we do not know the posterior since we cannot directly invert the parameter-data relationship (and since to do so would be to know the solution to the problem). Therefore, we must express it in terms of distributions which we do know. From Bayes's Theorem, we have the following proportionality relation (given data $y$ and model parameters $\theta$)
 \begin{equation*}
 %	\pi(\theta|y) = \dfrac{\ell(y|\theta)p(\theta)}{p(y)} \propto \pi(y|\theta)p(\theta)
 	\pi(\theta|y) \propto \ell(y|\theta)p(\theta)
@@ -77,7 +77,7 @@ where $\pi$ is the \textit{posterior} distribution, $\ell$ is the \textit{likeli
 % As opposed to the posterior---which tells us the probability of the model parameters given the data---
 The likelihood $\ell(y|\theta)$ tells us the probability of the data given the parameters. Therefore, we can easily calculate its value via a single model evaluation with the given parameters $\theta$ (referred to as the state). In addition, we may also have prior information about what parameter values are most likely to be realized in the actual system (for example, if the parameters can only take on values in a finite range or tend to be concentrated about a central mean). This information is incorporated via the prior distribution $p$. Together, the likelihood and prior help us to reconstruct the posterior distribution (up to a scale factor which does not impact the method) so that the inverse problem may be solved. 
 
-Now, concerning the specifics of how the Metropolis method successfully samples the posterior, suppose we're given some data $y$ and an initial state $\theta^0$ (for this paper, superscript indices will refer to the time step), which is a reasonable guess for the proper values of the parameters. The method generates new candidate states and probabilistically accepts them based on their relative improvement from the current state, using the Bayesian approximation of the posterior as a metric. Candidate state generation is performed via sampling of the \textit{proposal} distribution $q(\theta'|\theta^n)$, defined as the probability that a new state $\theta'$ will be selected as a candidate for acceptance given the current state $\theta^n$ (a prime denotes a candidate state). Whether acceptance or rejection is performed is determined by the \textit{acceptance probability} $\alpha(\theta'|\theta^n)$, defined as the probability that the candidate state $\theta'$ will be accepted given the current step $\theta^n$. Over time, the distribution created from the samples will conform to the posterior, at which point the method is said to have \textit{converged}. Below is a pseudocode implementation of Metropolis (Algorithm 1.1) which runs for $N_{step}$ steps.
+Now, concerning the specifics of how the Metropolis method successfully samples the posterior, suppose we're given some data $y$ and an initial state $\theta^0$ (for this paper, superscript indices will refer to the time step), which is a reasonable guess for the proper values of the parameters. The method generates new candidate states and probabilistically accepts them based on their relative improvement from the current state, using the Bayesian approximation of the posterior as a metric. Candidate state generation is performed via sampling of the \textit{proposal} distribution $q(\theta'|\theta^n)$, defined as the probability that a new state $\theta'$ will be selected as a candidate for acceptance given the current state $\theta^n$ (a prime denotes a candidate state). Whether acceptance or rejection is performed is determined by the \textit{acceptance probability} $\alpha(\theta'|\theta^n)$, defined as the probability that the candidate state $\theta'$ will be accepted given the current step $\theta^n$. The unification of these candidate generation and acceptance/rejection steps is the \textit{kernel} of the method, which defines the transition probabilities between states. Over time, the distribution created from the samples will conform to the posterior, at which point the method is said to have \textit{converged}. Below is a pseudocode implementation of Metropolis (Algorithm 1.1) which runs for $N_{step}$ steps.
 % mention prior?
 \begin{algorithm}[h]
 \begin{algorithmic}[1]
@@ -86,7 +86,7 @@ Now, concerning the specifics of how the Metropolis method successfully samples 
 		\STATE Generate $\theta' \sim q(\theta'|\theta^{n-1})$
 		\STATE \begin{varwidth}[t]{\linewidth}
 		Compute $\alpha(\theta'|\theta^{n-1}) = \textrm{min}\Bigg(1, \dfrac{\pi(\theta'|y)} {\pi(\theta^{n-1}|y)}\Bigg)$ \par
-		\hskip\algorithmicindent \hspace{1.20in} $=\textrm{min}\Bigg(1, \dfrac{\ell(y|\theta')p(\theta')} {\ell(y|\theta^{n-1})p(\theta^{n-1})}\Bigg)$
+		\hskip\algorithmicindent \hspace{1.172in} $=\textrm{min}\Bigg(1, \dfrac{\ell(y|\theta')p(\theta')} {\ell(y|\theta^{n-1})p(\theta^{n-1})}\Bigg)$
 		\end{varwidth}
 		\STATE Set $\theta^n = \theta'$ with probability $\alpha$, else $\theta^n = \theta^{n-1}$
 	\ENDFOR
@@ -96,7 +96,7 @@ Now, concerning the specifics of how the Metropolis method successfully samples 
 
 % Steps 4-5 let the algorithm accept a new state with either better fitness than the previous state or only marginally less fitness. Several things are achieved by doing this. First, the majority of time is spent searching through regions of increasingly better fitness. Also, since worse solutions can still be accepted, the algorithm can still climb back out of false extrema.
 
-The Metropolis method has several useful properties which contribute its effectiveness. First---interpreting the method similar to an annealing-type optimization method---it can both naively hill-climb and tactically accept poorer states to escape suboptimal local modes. When testing a new candidate state for acceptance, if it has an equal or higher posterior value than the current state, then $\alpha = 1$ and acceptance is guaranteed (hill-climbing). On the other hand, if the posterior is lower, then $1 > \alpha \ge 0$ and the poorer state still has a probability of being accepted. Though poorer states can be accepted, $\alpha$ decreases as the candidate's posterior becomes lower, so very poor candidates will usually be rejected. Counter-intuitively, this ability to accept poorer states is required to guarantee the eventual convergence of Metropolis (as evidenced by the appearance of the acceptance probability in the proof in the following paragraph).
+The Metropolis method has several useful properties which contribute its effectiveness. First---by interpreting the method similar to an annealing-type optimization method---it can both naively hill-climb and tactically accept poorer states to escape suboptimal local modes. When testing a new candidate state for acceptance, if it has an equal or higher posterior value than the current state, then $\alpha = 1$ and acceptance is guaranteed (hill-climbing). On the other hand, if the posterior is lower, then $1 > \alpha \ge 0$ and the poorer state still has a probability of being accepted. Though poorer states can be accepted, $\alpha$ decreases as the candidate's relative posterior becomes lower, so very poor candidates will usually be rejected. This ability to accept poorer states is required to guarantee the eventual convergence of Metropolis (as evidenced by the appearance of the acceptance probability in the proof in the following paragraph).
 
 This leads us to the second useful property of Metropolis. As long as the proposal distribution endows the Markov chain with a few key properties (irreducibility, aperiodicity, and non-transcience)---which hold for nearly all reasonable proposals---the distribution will always converge to the posterior, the stationary distribution of the chain formed by Metropolis. Assuming the three conditions mentioned above hold for the chain, we can easily show that the posterior distribution is the stationary distribution of the Metropolis method (proof taken from Gelman \cite{GelmanBayes} and included for convenience of the reader). Say the algorithm is at the $n$-th step and that $\theta^n = a$, where $a$ was drawn from the posterior. Now, suppose we propose the candidate $\theta^{n+1} = b$ such that $\pi(b) \ge \pi(a)$. Then,
 \begin{equation*}
@@ -112,14 +112,14 @@ On the other hand, suppose $\theta^n = b$ and we attempt a transition to the can
 \end{equation*}
 Therefore, $P(\theta^n = a, \theta^{n+1} = b) = P(\theta^n = b, \theta^{n+1} = a)$, which is the condition for stationarity. 
 
-Note that since the stationary distribution---being simply the posterior---is independent of the proposal used, and thus holds for all valid proposals. However, though the method is guaranteed to always converge to $\pi$, it may take a large number of steps for convergence to occur. Much of the algorithm's utility rests on the choice of a good proposal $q$. If one chooses too thin of a distribution, the method may have difficulty escaping suboptimal modes within an acceptable amount of time. On the other hand, too wide a distribution and the method might jump past true optimal modes or begin to oscillate about them, taking a large number of steps to sink into them.
+Note that since the stationary distribution---being simply the posterior---is independent of the proposal used, and thus holds for all valid proposals. However, though the method is guaranteed to always converge to $\pi$, it may take a large number of steps for convergence to occur. Much of the algorithm's utility rests on the choice of a good proposal $q$. If one chooses too thin of a distribution, the chain may have difficulty escaping suboptimal modes within an acceptable amount of time. On the other hand, too wide a distribution and the chain might jump past the true optimal mode or begin to oscillate about it, requiring a large number of steps to sink into it.
 
-With this in mind, the key question is, "What is the optimal proposal to use for problem $X$?" As should be expected, to know the answer to this question is essentially to know the solution to problem $X$. Therefore, certain assumptions and compromises must be made when designing proposals. Fortunately, as shall be seen in the following sections, this problem of the unknown proposal can be largely alleviated through clever means such as kernel mixing and adaptive proposals.
+With this in mind, the key question is, ``What is the optimal proposal to use for problem $X$?" As should be expected, to know the answer to this question is essentially to know the solution to problem $X$. Therefore, certain assumptions and compromises must be made when designing proposals. Fortunately, as shall be seen in the following sections, this problem of the unknown proposal can be largely alleviated through clever means such as kernel mixing and adaptive proposals.
 
 % use the words epistemic and ontic to refer to the different types of error
 
 \subsection{Kernel mixing and composition}
-Kernel mixing and composition are techniques where the transition probabilities (or kernel) used at each step in the chain may be different. Specifically, \textit{composition} refers to a method where the kernel is chosen at each step through some deterministic means. Consider, for example, the simple case we have two kernels $P_0, P_1$ and simply alternate between them. This produces the $n$-step kernel
+Kernel mixing and composition are techniques where the kernel used at each step in the chain may be different. Specifically, \textit{composition} refers to a method where the kernel is chosen at each step through some deterministic means. Consider, for example, the simple case we have two kernels $P_0, P_1$ and simply alternate between them. This produces the $n$-step kernel
 \begin{equation*}
 	\prod_{j = 0}^{n-1} P_{j \hspace{1.5pt} \textrm{mod} \hspace{1.5pt} 2}
 \end{equation*}
@@ -141,7 +141,9 @@ where the $i_j$ are determined by performing some particular stochastic process.
 
 Another technique for improving the performance of MCMC is to use so-called \textit{adaptive} methods which allow the kernel to adapt to the state space as more and more samples are obtained. The chains produced by these methods are referred to as \textit{inhomogeneous} chains since the kernel is not constant over time. For many models with nonlinear interactions between the parameters, neighboring regions in state space can have completely different posterior profiles, causing what would be an optimal proposal in one region to perform poorly in another. There may be numerous local modes clustered together or large plateaus. These effects combined with a lack of prior knowledge of which proposal should be chosen can inevitably lead to long run times. Thus, in these cases, one can justify the use of methods which can tune themselves based on the changing geometry of the state space.
 
-Though adaptive methods can dramatically increase computational performance and efficiency, they often lose some of the desired analytical properties that their more simple counterparts have. For example, if the evolution of the kernel depends on the samples from multiple previous steps, the chain is no longer \textit{Markovian}. Also, in general, one cannot prove ergodicity without the assumption of several special conditions which may be difficult to verify in practice. Fortunately, even if one cannot verify convergence properties for a specific adaptive MCMC method, it may still be used to dramatically shorten the burn-in time as the chain searches for the target distribution. Despite the difficulties discussed, we were actually able to prove our own method's ergodicity through simple (yet notationally dense) means thanks to Theorem 5 from a paper by Roberts and Rosenthal \cite{RRAdaptErgo}. See this resource for a very thorough analysis on conditions for the convergence of adaptive MCMC methods.
+Though adaptive methods can dramatically increase computational performance and efficiency, they often lose some of the desired analytical properties that their simpler counterparts have.
+%For example, if the evolution of the kernel depends on the samples from multiple previous steps, the chain is no longer \textit{Markovian}.
+Also, in general, one cannot prove ergodicity without the assumption of several special conditions which may be difficult to verify in practice. (Fortunately, even if one cannot verify convergence properties for a specific adaptive MCMC method, it may still be used to dramatically shorten the burn-in time as the chain searches for the posterior's optimum.) Despite these difficulties, we were able to prove our own method's ergodicity through simple (yet notationally dense) means thanks to Theorem 5 from a paper by Roberts and Rosenthal \cite{RRAdaptErgo}. See this resource for a very thorough analysis on conditions for the convergence of adaptive MCMC methods.
 
 % Also, since the proposal distribution is constantly changing scale, the transition probabilities are not \textit{stationary} either. This is not an issue, however, since most adaptive methods are meant to be used solely during burn-in time and then replaced by a method with more analytically desirable properties for remaining duration of the run.
 
@@ -251,14 +253,14 @@ The interval widths $n_1, n_2$ define three distinct regions for these functions
 	\caption{Left: RSAP proposal-scaling functions \textnormal{(Equation (\ref{scaling}))} vs. adaptation degree $k$ with $r_t , r_w = 0.3, A_t = 0.5, A_w = 5$. Right: RSAP proposal-mixing probabilities \textnormal{(Equation (\ref{mixing}))} vs. time step with $n_1 = 400, n_2 = 300$.}
 \end{figure}
 
-To derive the full $M$-parameter proposal (which we do in Section 2.3 with the help of a great deal of added notation), one has to consider all $3^M$ possibilities of selecting the $M$ parameters and their three different types of adaptation. It is helpful to do a two-parameter example. Each parameter will have its own set of proposal widths $\sigma_{t,m} < \sigma_{f,m} < \sigma_{w,m}$ ($m=1,2$). Upon adaptation, both parameters must choose which form of adaptation to apply, meaning there are $3^2$ possibilities for adaptation. Therefore, defining for the sake of notation $N(\theta^n, \sigma_1^2, \sigma_2^2)$ as a bivariate Gaussian distribution with diagonal covariance matrix given by the diagonal entries $(\sigma_1^2, \sigma_2^2)$, we can write the two-parameter proposal as (the superscript $n$'s for $\sigma$'s omitted for space reasons)
+To derive the full $M$-parameter proposal (which we do in Section 2.3 with the help of a great deal of added notation), one has to consider all $3^M$ possibilities of selecting the $M$ parameters and their three different types of adaptation. It is helpful to do a two-parameter example. Each parameter will have its own set of proposal widths $\sigma_{t,m}, \sigma_{f,m}, \sigma_{w,m}$ ($m=1,2$). Upon adaptation, both parameters must choose which form of adaptation to apply, meaning there are $3^2$ possibilities for adaptation. Therefore, for the sake of notation, defining $N(\theta^n, \sigma_1^2, \sigma_2^2)$ as a bivariate Gaussian distribution with diagonal covariance matrix given by the diagonal entries $(\sigma_1^2, \sigma_2^2)$, we can write the two-parameter proposal as (the superscript $n$'s for $\sigma$'s omitted for space reasons)
 \begin{equation*}
 	\begin{split}
 		q^n(\theta'|\theta^n) = & \hspace{3pt} \sum_{i \in \{t,f,w\}} \sum_{j \in \{t,f,w\}} p_i^n p_j^n N(\theta^n,  \sigma_{i,1}^2, \sigma_{j,2}^2)
 		\\
-		= & \hspace{3pt} (p_t^n)^2 N(\theta^n, \sigma_{t,1}^2, \sigma_{t,2}^2) + p_t^n p_f^n N(\theta^n,  \sigma_{t,1}^2, \sigma_{f,2}^2) + p_t^n p_w^n N(\theta^n,  \sigma_{t,1}^2, \sigma_{w,2}^2) +
+		= & \hspace{3pt} (p_t^n)^2 N(\theta^n, \sigma_{t,1}^2, \sigma_{t,2}^2) + p_t^n p_f^n N(\theta^n,  \sigma_{t,1}^2, \sigma_{f,2}^2) + p_t^n p_w^n N(\theta^n,  \sigma_{t,1}^2, \sigma_{w,2}^2) \hspace{3pt} +
 		\\
-		& \hspace{3pt} p_f^n p_t^n N(\theta^n,  \sigma_{f,1}^2, \sigma_{t,2}^2) + (p_f^n)^2 N(\theta^n, \sigma_{f,1}^2, \sigma_{f,2}^2) + p_f^n p_w^n N(\theta^n,  \sigma_{f,1}^2, \sigma_{w,2}^2) +
+		& \hspace{3pt} p_f^n p_t^n N(\theta^n,  \sigma_{f,1}^2, \sigma_{t,2}^2) + (p_f^n)^2 N(\theta^n, \sigma_{f,1}^2, \sigma_{f,2}^2) + p_f^n p_w^n N(\theta^n,  \sigma_{f,1}^2, \sigma_{w,2}^2) \hspace{3pt} +
 		\\
 		& \hspace{3pt} p_w^n p_t^n N(\theta^n, \sigma_{w,1}^2, \sigma_{t,2}^2) + p_w^n p_f^n N(\theta^n,  \sigma_{w,1}^2, \sigma_{f,2}^2) + (p_w^n)^2 N(\theta^n, \sigma_{w,1}^2, \sigma_{w,2}^2)
 	\end{split}
@@ -345,12 +347,12 @@ with their respective \textit{acceptance probabilities} $a^n_{(j_1,i_1), \cdots,
 
 Next, define the following linear combinations as the \textit{adaptive proposals}
 \begin{equation}
-	q^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = \bigg( \sum^{3}_{j_1=1} p_{j_1}^n \cdots \sum^{3}_{j_M=1} p_{j_M}^n E \Big( (j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M) \Big) \bigg)
+	q^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = \sum^{3}_{j_1=1} p_{j_1}^n \cdots \sum^{3}_{j_M=1} p_{j_M}^n E \Big( (j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M) \Big)
 	\label{adaPro}
 \end{equation}
 with their associated \textit{acceptance probabilities}
 \begin{equation*}
-	b^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = \bigg( \sum^{3}_{j_1=1} p_{j_1}^n \cdots \sum^{3}_{j_M=1} p_{j_M}^n a^n_{(j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M)} \bigg)
+	b^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} = \sum^{3}_{j_1=1} p_{j_1}^n \cdots \sum^{3}_{j_M=1} p_{j_M}^n a^n_{(j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M)}
 \end{equation*}
 %for all $n = \sum_{j = 1}^{3} i^j_m$.
 This is the $M$-parameter generalization of the one- and two-parameter proposals from Section 2.2 with the subscripts $t,f,w$ replaced with $1,2,3$, respectively. Let's examine Equation (\ref{adaPro}) more closely before continuing on. Regarding the indices, the integers $i^1_m$ are the degrees of proposal-\textit{thinning} adaptation while the integers $i^3_m$ are the degrees of proposal-\textit{widening} adaptation. The integers $i^2_m$ can be thought of as the degrees of proposal-\textit{fixing} adaptation (clearly a meaningless notion). They are merely auxiliary indices which help to establish conservation of adaptation degrees. Regarding the sums, there is one per parameter and their indices cover the three adaptation options so that the probability of choosing the elemental proposal $E((j_1,i^{j_1}_1), \cdots, (j_M, i^{j_M}_M))$ is $p_{j_1}^n \cdots p_{j_M}^n$.
@@ -363,7 +365,7 @@ A helpful (though not exactly correct) way to think about the generalization fro
 (This equation is written for purely instructive purposes, and is not utilized in any way in the proof or the algorithm itself.)
 \end{comment}
 
-Lastly, define $Q^n$ as the \textit{full proposal} at time-step $n$. Since acceptance and rejection are random phenomena, we cannot know ahead of time which specific elemental or adaptive proposal will be used at time step $n$. Thus, the full proposal will be a linear combination of the adaptive proposals whose total adaptation degrees are less than or equal to $n$ (since there could only have been up to $n$ rejections and, therefore, $n$ adaptations) with functions of their respective acceptance probabilities.
+Lastly, define $Q^n$ as the \textit{full proposal} at time-step $n$. Since acceptance and rejection are random phenomena, we cannot know ahead of time which specific elemental or adaptive proposal will be used at time step $n$. Thus, the full proposal will be a linear combination of the adaptive proposals whose total adaptation degrees are less than or equal to $n$ (since there could only have been up to $n$ rejections and, therefore, $n$ adaptations) with functions of their respective acceptance probabilities. In what follows, we will show how to build $Q^n$ from the objects we defined above.
 
 Let us now examine the structure of the full proposal and how it evolves throughout a run, temporarily restricting ourselves to one dimension for simplicity. Below, Figure 1 provides a graphical representation of the flow of proposals during a run (with the time step superscripts ommitted).
 \begin{figure}[!h]
@@ -373,13 +375,13 @@ Let us now examine the structure of the full proposal and how it evolves through
 	\caption{A graphical depiction of RSAP and the possible transitions that can take place. At any node (\textit{adaptive} proposal) in the graph, four transitions can occur: increasing one of the three indices (rejection) or returning to the initial state (acceptance). Note that we have omitted the time step superscript since to properly represent the method graphically would require another dimension to represent time. We instead identify all the proposals with the same adaptation degrees and simply use primes to denote the fact that they represent numerous other proposals with equivalent adaptation degrees but larger time step superscripts.}%a transition must take place between time steps (i.e. increments the superscript), thus making it unclear which step value any of the nodes on the graph should be given, particularly for the center, un-adapted node/proposal.}
 %. SHOULD THIS GRAPH HAVE ANY RETURN LOOPS?   IT MAY BE CONFUSING TO HAVE STATES FROM Q001 TO Q000 BUT NOT FROM THE OTHERS.	
 \end{figure}
-One can think of method runs as paths through this graph. The first state is always $q^0_{0,0,0}$ since no adaptation has yet taken place. Consequently, the first full proposal $q^0$ is also $q^0_{0,0,0}$. As illustrated by the graph, there are four possible transitions from any given state. If acceptance occurs, the state returns to $q^0_{0,0,0}$ (the fixed proposal with no adaptation). Alternatively, if the candidate is rejected, we will increment the adaptive degree indices corresponding to the elemental proposal which was used. For example, suppose that we chose to use a thin elemental proposal and the sample drawn from it was rejected. Then, we increment the thin proposal index so that the adaptive proposal used in the next time step will be $q^1_{1,0,0}$. We can represent this mathematically with linear combinations of the adaptive proposals. Equations (\ref{exQ}) below show the full proposals through $q^2$.
+One can think of method runs as paths through this graph. The first proposal is always $q^0_{0,0,0}$ since no adaptation has yet taken place. Consequently, the first full proposal $Q^0$ is also $q^0_{0,0,0}$. As illustrated by the graph, there are four possible transitions from any given proposal. If acceptance occurs, the adaptation returns to $q^0_{0,0,0}$ (the fixed proposal with no adaptation). Alternatively, if rejection occurs, we will increment the adaptive degree indices corresponding to the elemental proposal which was used. For example---beginning with $q^0_{0,0,0}$---suppose that rejection occurs and thinning was the chosen mode of adaptation. Then, we increment the thin proposal index so that the adaptive proposal used in the next time step will be $q^1_{1,0,0}$. We can represent this mathematically with linear combinations of the adaptive proposals. Equations (\ref{exQ}) below show the full proposals through $q^2$.
 \begin{equation}
 	\begin{split}
-		Q^0 = & \hspace{3pt} q_{0,0,0}^0
-		\\
+		Q^0 = & \hspace{3pt} q_{0,0,0}^0 
+		\\[5pt]
 		Q^1 = & \hspace{3pt} b^0_{0,0,0} q_{0,0,0}^1 + r^0_{(1,0)} p^0_1 q_{1,0,0}^1 + r^0_{(2,0)} p^0_2 q_{0,1,0}^1 + r^0_{(3,0)} p^0_3 q_{0,0,1}^1
-		\\
+		\\[5pt]
 		Q^2 = & \hspace{3pt} \Big( b^1_{0,0,0} b^0_{0,0,0} + b^1_{1,0,0} r^0_{(1,0)} p^0_1 + b^1_{0,1,0} r^0_{(2,0)} p^0_2 + b^1_{0,0,1} r^0_{(3,0)} p^0_3 \Big) q_{0,0,0}^2 + 
 		\\
 		& \hspace{3pt} r^1_{(1,0)} p^1_1 b^0_{0,0,0} q_{1,0,0}^2 + r^1_{(2,0)} p^1_2 b^0_{0,0,0} q_{0,1,0}^2 + r^1_{(3,0)} p^1_3 b^0_{0,0,0} q_{0,0,1}^2 +
@@ -392,7 +394,7 @@ One can think of method runs as paths through this graph. The first state is alw
 	\end{split}
 	\label{exQ}
 \end{equation}
-As can be seen (and was mentioned earlier), $Q^n$ contains all adaptive proposals of total degree up to $n$, i.e., $i_1^1+i_1^2+i_1^3 \le n$ (for $M$ parameters, this inequality holds for all parameters simultaneously) . We can express $Q^n$ neatly as
+As can be seen (and was mentioned earlier), $Q^n$ contains all adaptive proposals of total degree up to $n$, i.e., $i_1^1+i_1^2+i_1^3 \le n$ (for $M$ parameters, this inequality holds for all parameters simultaneously). Therefore, we can express $Q^n$ neatly as
 \begin{equation*}
 	Q^n = \sum^n_{\ell=0} \Bigg(\sum_{i_1^1+i_1^2+i_1^3=\ell} c^n_{i_1^1,i_1^2,i_1^3} q_{i_1^1,i_1^2,i_1^3}^n \Bigg)
 \end{equation*}
@@ -400,17 +402,17 @@ where
 \begin{align*}
 	\sum^n_{\ell=0} \Bigg(\sum_{i_1^1+i_1^2+i_1^3=\ell} c^n_{i_1^1,i_1^2,i_1^3} \Bigg) = 1
 \end{align*}
-defines our normalization (since some proposal must always be chosen) and the inner sums are taken over all possible values of the three indices such that their sum is less than or equal to $n$. The value $c^n_{i_1^1,i_1^2,i_1^3}$ can be interpreted as the probability that that the adaptive proposal defined by the subscripts will be used at step $n$.
+defines our normalization (since some proposal must always be chosen) and the inner sums are taken over all possible values of the three indices such that their sum is less than or equal to $\ell$. The value $c^n_{i_1^1,i_1^2,i_1^3}$ can be interpreted as the probability that that the adaptive proposal defined by the subscripts will be used at step $n$.
 
 Now, returning to $M$ parameters, let us generalize the above formulae. The full proposal is written
 \begin{equation*}
 	Q^n = \sum^n_{\ell=0} \Bigg(\sum_{i^1_m+i^2_m+i^3_m=\ell} c^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} q_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}^n \Bigg)
 \end{equation*}
-with normalization
+with analogous normalization condition
 \begin{align*}
 	\sum^n_{\ell=0} \Bigg(\sum_{i^1_m+i^2_m+i^3_m=\ell} c^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} \Bigg) = 1
 \end{align*}
-where $m = 1, \cdots, M$. We can construct several recurrence relations which describe how the values of the coefficients $c^n$ change over time. We get one relation which governs the evolution of the coefficient corresponding to the proposal which has zero total adaptation degree and another which governs all the rest.
+where $m = 1, \cdots, M$. We can construct several recurrence relations which describe how the values of the coefficients $c^n$ change over time. We get one relation which governs the evolution of the coefficient corresponding to the proposal which has zero total adaptation degree and another which governs the rest.
 \begin{equation}
 	\begin{split}
 		c^{n+1}_{0,0,0, \cdots, 0,0,0} = & \hspace{3pt} \sum^n_{\ell=0} \Bigg( \sum_{i^1_m+i^2_m+i^3_m=\ell} \Big( b^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} \Big) \Big( c^n_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M} \Big) \Bigg)
@@ -421,7 +423,15 @@ where $m = 1, \cdots, M$. We can construct several recurrence relations which de
 	\end{split}
 	\label{recur}
 \end{equation}
-The first relation is fairly basic, as it simply was derived from the fact that the adaptation-less proposal will be used at any step which immediately follows an acceptance. Consequently, it finds the total, weighted acceptance probability given all possible proposals which could be used at that step. This is equal to the probability that the adaptation-less proposal will be chosen at the following step. The second relation is more complicated. Conceptually, it finds the total, weighted rejection probability from all proposals which could possibly precede the proposal under consideration. More specifically, it does this by summing the weighted rejection probabilities over all valid permutations of subtracting one from the three types adaptation degrees for all $M$ parameters (of which there are no more than $3^M$ permutations). A permutation is considered valid when subtracting one does not give a negative adaptation degree (thus the $i^{j_m}_m \ge 1$ under the sums).
+The first relation is fairly basic, as it simply was derived from the fact that the adaptation-free proposal will be used at any step which immediately follows an acceptance. Consequently, it finds the total, weighted acceptance probability given all possible proposals which could be used at that step. This is equal to the probability that the adaptation-free proposal will be chosen at the following step.
+
+The second relation is more complicated. The summations are over all values $j_m$ such that $i_m^{j_m} \ge 1$ for $m = 1, \cdots, M$. Conceptually, the relation finds the total, weighted rejection probability from all proposals which could possibly precede the proposal under consideration. More specifically, it does this by summing the weighted rejection probabilities over all valid configurations
+% permutations (original, wrong)
+% instances
+% configurations
+% sets
+% groups
+of subtracting one from the three types adaptation degrees for all $M$ parameters (of which there are no more than $3^M$ possible configurations). A configuration is considered valid when subtracting one does not give a negative adaptation degree (thus the $i^{j_m}_m \ge 1$ under the sums).
 
 % is it confusing which time step is being referred to as current/previous?
 
@@ -435,14 +445,14 @@ Let $c^{n}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M}$ be the coefficient of this pr
 \end{equation*}
 Now, all the terms in this equation are bounded between 0 and 1 and $p_1^n \rightarrow 0$ as $n \rightarrow \infty$. Therefore, $c^{n+1}_{1, 0, 0, \cdots, i^1_M, i^2_M, i^3_M} \rightarrow 0$, as well, and we have that all coefficients with at least one parameter having a single adaptive degree assigned to either thinning or widening vanish.
 
-We will now prove the induction step, which states that if any coefficient with at least one parameter having at least one thinning or widening adaptive degree vanishes, then the coefficients for all proposals that it precedes by one time step (in the sense of the discussion of Equation (\ref{recur})) do as well. Consider $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$, which has at least one parameter with at least one thinning or widening adaptive degree. Equation (\ref{recur}) applied to this coefficient contains the coefficients for all possible preceding states. Now, since there is at least one degree of thinning or widening adaptation in the coefficient under consideration, every term in the sum from Equation (\ref{recur}) can be classified in one of two ways: either 1) that adaptation degree was obtained from the immediately preceding step or 2) from an earlier step. If it is from the immediately preceding step, we can factor out the appropriate probability term as we did for the base case, causing that term to vanish. If it was from an earlier step, then the proposal associated with that term already has at least one parameter with at least one thinning or widening adaptive degree, and thus---according to the induction hypothesis---vanishes. Having shown that every term in the sum vanishes, we have shown that all proposal coefficients with at least one parameter with at least one thinning or widening adaptive degree also vanish. Thus, the only non-vanishing coefficients are those for purely fixing proposals, which are all identical to the adaptation-less proposal. Therefore, the full proposal $Q^n \rightarrow q^{n}_{0,0,0, \cdots, 0,0,0}$ as $n \rightarrow \infty$, thus proving part ($b$) of Theorem \ref{ErgoThm}, i.e., diminishing adaptation. Therefore, having proven both ($a$) and ($b$), we have also proven the ergodicity of RSAP.
+We will now prove the induction step, which states that if any coefficient with at least one parameter having at least one thinning or widening adaptive degree vanishes, then the coefficients for all proposals that it precedes by one adaptation degree of any kind (in the sense of the discussion of Equation (\ref{recur})) vanish as well. Consider $c^{n}_{i^1_1, i^2_1, i^3_1, \cdots, i^1_M, i^2_M, i^3_M}$, which has at least one parameter with at least one thinning or widening adaptive degree. Equation (\ref{recur}) applied to this coefficient contains the coefficients for all possible preceding states. Now, since there is at least one degree of thinning or widening adaptation in the coefficient under consideration, every term in the sum from Equation (\ref{recur}) can be classified in one of two ways: either 1) that adaptation degree was obtained from the immediately preceding step or 2) from an earlier step. If it is from the immediately preceding step, we can factor out the appropriate probability term as we did for the base case, causing that term to vanish. If it was from an earlier step, then the proposal associated with that term already has at least one parameter with at least one thinning or widening adaptive degree, and thus---according to the induction hypothesis---vanishes. Having shown that every term in the sum vanishes, we have shown that all proposal coefficients with at least one parameter with at least one thinning or widening adaptive degree also vanish. Thus, the only non-vanishing coefficients are those for purely fixing proposals, which are all identical to the adaptation-free proposal. Therefore, the full proposal $Q^n \rightarrow q^{n}_{0,0,0, \cdots, 0,0,0}$ as $n \rightarrow \infty$, thus proving part ($b$) of Theorem \ref{ErgoThm}, i.e., diminishing adaptation. Therefore, having proven both ($a$) and ($b$), we have also proven the ergodicity of RSAP.
 
-It is readily apparent that we took advantage of the ergodicity of Metropolis in order to prove the ergodicity of RSAP. In fact, the convergence of the mixing probabilities to $p_f^n \rightarrow 1$ essentially forces the method into Metropolis over time. We suspect, however, that RSAP might be ergodic without this condition on the mixing probabilities. Proving this would require showing that Equation (\ref{recur}) implies that the $c^n$'s converge in distribution. They certainly do not directly converge in value since they depend on the highly-stochastic acceptance/rejeciton probabilities; however, an argument can likely be made that this implies their convergence in distribution. We will leave this for a future paper since the current version of RSAP is sufficient.
+It is readily apparent that we took advantage of the ergodicity of Metropolis in order to prove the ergodicity of RSAP. In fact, the convergence of the mixing probabilities to $p_f^n \rightarrow 1$ essentially forces the method into Metropolis over time. We suspect, however, that RSAP might be ergodic without this condition on the mixing probabilities. Proving this would require showing that Equation (\ref{recur}) implies that the $c^n$'s converge in distribution. They certainly do not directly converge in value since they depend on the acceptance/rejeciton probabilities which are highly volatile; however, an argument can likely be made that this implies their convergence in distribution. We will leave this for a future paper since the current version of RSAP is sufficient.
 
 
 \section{Computational testing}
 Having proven the %analytical integrity 
-ergodicity of our method, we now move on to demonstrate its practical utility through the presentation of numerous computational results. These cover multiple different aspects of the method's performance, including flexibility, mixing efficiency, and speed of convergence. We also present results from a new optimization-style test we developed in which we find the cumulative probability distribution for convergence of the chain to the global minimum of the test function versus a range of fixed proposal widths. This technique provides easy-to-interpret results which are numerically \textit{and} visually simple to compare. This test will be applied to RSAP, Metropolis, and modified Adaptive Metropolis from Section 1.3.
+ergodicity of our method, we now move on to demonstrate its practical utility through the presentation of numerous computational results which cover multiple different aspects of the method's performance, including its flexibility, mixing efficiency, and convergence properties. We also present results from a new optimization-style test that we developed in which we find the cumulative probability distribution for convergence of the chain to the posterior's global maximum (or the minimum of the test function) versus a range of fixed proposal widths. This technique provides easy-to-interpret results which are numerically \textit{and} visually simple to compare. This test will be applied to RSAP, Metropolis, and Adaptive Metropolis from Section 1.3.
 
 
 \subsection{Discussion of RSAP and modified AM parameter values used in testing}
@@ -453,11 +463,11 @@ When performing numerical experiments on our method, we used standard optimizati
 					& \propto \textrm{exp}\bigg(-\dfrac{1}{2} \dfrac{f(\theta)^2}{\Delta^2}\bigg)\\
 	\end{split}
 \end{equation*}
-The value of $\Delta$ is related to the scale of the error. It also affects the ease of acceptance, and thus the relative peakedness of the resulting sample-binned approximation of the posterior. Not knowing its proper value, we include it as a parameter for RSAP to estimate, though we set its proposal width quite low so that it does not change too rapidly, dramatically altering the acceptance rate (we further discuss this parameter and its effects on performance in Section 3.3).
+The value of $\Delta$ is related to the scale of the error. It also affects the ease of acceptance, and thus the relative peakedness of the resulting sample-binned approximation of the posterior. Not knowing its proper value, we include it as a parameter for RSAP to estimate, though we set its proposal width quite low so that it does not change too rapidly, dramatically altering the acceptance rate.%(we further discuss this parameter and its effects on performance in Section 3.3).
 
-There is also the matter of setting the adaptation parameters to their proper values. Clearly, the optimal values of these parameters are problem-dependent; so we attempted to find a set of reasonable values which improved the performance gain over Metropolis for as many test cases as possible. We thus arrived at maximum scaling magnitudes of $\hat A_{t} = 0.1, \hat A_{w} = 10$, respectively. Being able to both increase and decrease the proposal width by an order of magnitude ensures that the true optimal width is likely contained within the interval $[\hat A_t \sigma_f, \hat A_w \sigma_f]$. Next, concerning the scaling rates, we found that their values were less significant than the magnitudes in determining performance gain. Their values were set to $r_{t} = r_{w} = 0.3$, since this puts the scaling to within approximately 5\% of its maximum effect within 10 rejection steps ($e^{-0.3 \cdot 10} \approx 0.049$). Smaller rate values would require more consecutive rejections to reach the same amount of scaling, thus leaving the more extreme scaling values unused. Lastly, the interval widths $n_1, n_2$ are likely the most problem-dependent parameters since they determine how long RSAP is allowed to be adaptive. As discussed earlier, $n_1$ should be large w.r.t. $N_{step}$ while $n_2 \leq N_{step} - n_1$ has more freedom. Because of their problem dependence, we will vary them throughout the tests.
+There is also the matter of setting the adaptation parameters to their proper values. Clearly, the optimal values of these parameters are problem-dependent; so we attempted to find a set of reasonable values which improved the performance gain for as many test cases as possible. We thus arrived at scaling magnitudes of $\hat A_{t} = 0.1, \hat A_{w} = 10$, respectively. Being able to both increase and decrease the proposal width by an order of magnitude ensures that the true optimal width is likely contained within the interval $[\hat A_t \sigma_f, \hat A_w \sigma_f]$. Next, concerning the scaling rates, we found that their values were less significant than the magnitudes in determining performance gain. Their values were set to $r_{t}, r_{w} = 0.3$, since this puts the scaling to within approximately 5\% of its maximum effect within 10 rejection steps ($e^{-0.3 \cdot 10} \approx 0.049$). Smaller rate values would require more consecutive rejections to reach the same amount of scaling, thus wasting valuable time. Lastly, the interval widths $n_1, n_2$ are likely the most problem-dependent parameters since they determine how long RSAP is allowed to be adaptive. As discussed earlier, $n_1$ should be large w.r.t. $N_{step}$ while $n_2 \leq N_{step} - n_1$ has more freedom.
 
-Concerning modified AM, we ran the method for $N_{burn}$ steps using the same fixed proposal widths as the other two methods. Once these steps have passed, we begin using the modified AM kernel, while ignoring a specified fraction of the initial steps (specifically, the first $N_{burn}/2$ steps) in all of the covariance calculations. This is so that the covariance matrix calculations aren't as biased by the choice of initial state. Also, we set $\beta = 0.5$ for all of the tests.
+Concerning AM, we ran the method for $N_{burn}$ steps using the same fixed proposal widths as the other two methods. Once these steps have passed, we begin using the AM proposal, ignoring the first half of the initial burn-in steps in all of the subsequent covariance calculations. This is so that the covariance matrix calculations aren't as biased by the choice of initial state. Also, we set $\varepsilon = 0.001$ for all of the tests.
 
 \subsection{Chain mixing}
 % https://python-graph-gallery.com/111-custom-correlogram/
@@ -499,7 +509,7 @@ where $a = 20, b = 4, M = 1, \theta \in [-10, 10]$. The initial state values wer
 \end{figure}
 It is very easy to see from the trace and posterior plots that RSAP efficiently samples the modes near the center.
 
-Lastly, we have a rather illustrative example of the superiority of RSAP to standard Metropolis in the form of a bi-modal function defined by
+Lastly, we have a rather illustrative example of the RSAP's performance in the form of a bi-modal function defined by
 \begin{equation*}
 	f(\theta) = a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(\theta-c)^2}{b^2} \Big)^{d/2} ) \Big) + a \Big( 1 - \textrm{exp}(-\dfrac{1}{2} \Big( \dfrac{(\theta+c)^2}{b^2} \Big)^{d/2} ) \Big)
 \end{equation*}
@@ -518,11 +528,11 @@ where $a = 0.5, b = 0.15, c = 0.333, d = 8, \theta \in [-1, 1]$. The initial sta
 \end{figure}
 As can be seen, there is efficient mixing between the two modes in the region up until $n = n_1$; however, once standard Metropolis begins to overtake the adaptive effects, the chain becomes temporarily ``stuck" in whichever mode it was currently in. One can simply increase $n_1$ to a suitably large value to maintain the level of mixing efficiency for a longer period of time.
 
-Obviously, this test can be easily skewwed by choosing method parameters which work well for RSAP but poor for Metropolis or AM. The tests in the next section provide a more fair comparison, letting us examine the optimal performance of each method.
+Clearly, these chain mixing tests can be easily skewed by choosing method parameters which work well for RSAP but poor for Metropolis or AM (choosing too small of a proposal width, for example). To alleviate this, the tests in the next section provide a more fair comparison, letting us examine the optimal performance of each method.
 
 
-\subsection{Convergence to global minimum}
-We now move on to present results from our optimization-inspired experiments. These use statistics from large ensembles of chains to provide a systematic way of comparing the short-term (i.e., burn-in) performance of Metropolis, Adaptive Metropolis, and RSAP over different proposal widths. This is useful because it allows us to compare both methods in their optimal context, since sweeping through a large range of proposal widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP outperforms both Metropolis and Adaptive Metropolis for most proposal widths, particularly in higher dimensionalities.
+\subsection{Convergence to the posterior's global maximum}
+We now move on to present results from our optimization-inspired test. This test uses statistics from large ensembles of chains to provide a systematic way of comparing the short-term (i.e., burn-in) performance of Metropolis, Adaptive Metropolis, and RSAP over different proposal widths. This is a valuable test because it shows how quickly on average each method is able to find the global maximum of the posterior for each proposal width. Also, it allows each method to be compared in their optimal context, since sweeping through a large range of proposal widths is guaranteed to contain a near-optimal value. As we shall soon see, RSAP outperforms both Metropolis and Adaptive Metropolis for most proposal widths, particularly in higher dimensionalities.
 
 When performing this test (see Algorithm 3.1), we used $M$-dimensional Ackley functions
 \begin{equation*}
@@ -536,7 +546,7 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$.
 	linenodelimiter=.
 }
 \begin{algorithmic}[1]
-	\STATE Define the $M$-dimensional parameter vector $\theta^{n,i,j}$ as the $n$-th time-step of the $j$-th chain of the $i$-th proposal width
+	\STATE Define the $M$-dimensional parameter vector $\theta^{n}_{i,j}$ as the $n$-th time-step of the $j$-th chain of the $i$-th proposal width
 	\FOR{$i = 1$ \TO $N_{width}$}
 		\FOR{$j = 1$ \TO $N_{chain}$} % initialize chains
 %<<<<<<< HEAD
@@ -553,7 +563,7 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$.
 				\FOR{$j = 1$ \TO $N_{chain}$} % check for convergence
 			\STATE Initialize convergence check: isConv = false
 			\FOR{$n = 1$ \TO $N_{step}$}
-				\IF{\NOT isConv \AND $f(\theta^{n,i,j}) \le \varepsilon$}
+				\IF{\NOT isConv \AND $f(\theta^{n,i,j}) \le \epsilon$}
 					\STATE $c^i_n = c^i_{n-1} + 1$
 					\STATE isConv = true
 				\ELSE
@@ -566,7 +576,7 @@ over a domain defined by the $M$-dimensional cube $[-L,L]^M$.
 \end{algorithmic}
 \caption{Test for convergence to global max}
 \end{algorithm}
-We sweep through $N_{width}$ proposal widths at equally-spaced intervals, i.e., $\sigma^i = i \sigma_{max} / (N_{width}-1)$ where $0 \le i \le N_{width}-1$.  Obviously, since RSAP adapts the proposal width, we will be sweeping through its \textit{fixed} proposal width, letting these values also equal the widths for Metropolis.  We say ``widths" rather than ``covariance matrices" since---for the Ackley function---each parameter axis is scaled equally, thus causing a single width to work for each. For every width value, we run $N_{chain}$, each for $N_{step}$, with initial states that are uniformly-distributed across the cubical domain. The cumulative probability of convergence to the global minimum of the Ackely function versus the time-step is then calculated for each width by determining at which time-step each chain's Ackley evaluation is below the threshold $\varepsilon$.
+We sweep through $N_{width}$ proposal widths at equally-spaced intervals, i.e., $\sigma_i = \sigma_{max} (i - 1) / (N_{width}-1)$ where $i = 1, \cdots, N_{width}$.  Obviously, since RSAP adapts the proposal width, we will be sweeping through its \textit{fixed} proposal width, letting these values also equal the widths for Metropolis.  We say ``widths" rather than ``covariance matrices" since---for the Ackley function---each parameter axis is scaled equally, thus causing a single width to work for each. For every width value, we run $N_{chain}$ unique chains (each for $N_{step}$ steps) with initial states that are uniformly-distributed across the hypercubical domain. The cumulative probability of convergence to the global posterior's global maximum versus the time-step is then calculated for each width by determining at which time-step each chain's Ackley evaluation is below the threshold $\epsilon$.
 
 Let us note two more considerations before presenting the results. Since we are merely concerned with the short-term behavior of RSAP, the values $n_1,n_2$ play no role, thus placing us in the adaptive regime the entire time. Also, concerning the value of $\Delta$, lower values are superior for fast initial convergence but not necessarily ideal for accurate sampling of the posterior in the long-term. RSAP, in particular, prefers a low value of $\Delta$, since doing so causes more rejections to occur, letting RSAP adapt more frequently. Thus, we will restrict ourselves to only small values of $\Delta$.
 
@@ -676,7 +686,7 @@ From Haario AP:
 
 
 \section{Conclusions}
-From both our analytical and numerical results, it is clear that RSAP deserves a well-earned a place in the vast marketplace of adaptive MCMC methods. Though it performs at an average rate in low-dimensions, its true power lies in its fast convergence in high-dimensional, multimodal spaces, performing vastly superior to Metropolis and AM in this context.
+In this paper, we have presented RSAP---a new adaptive MCMC method---and demonstrated its performance through both analytical and numerical means. Though it performs at an adequately in low-dimensions, its true power lies in its fast convergence in high-dimensional, multimodal spaces, performing better than Metropolis and AM in this particular context.
 
 There are several modifications and applications of RSAP which we would like to investigate in future work. Certainly, different adaptation rules---such as decrementing instead of reseting upon acceptance, scaled incrementing/decrementing based on the acceptance rate, or some type of stochastic incrementing---would be an interesting topic. We also have several ideas on how to combine RSAP and AM in such a way that the resulting method will have the fast convergence of RSAP along with the consistent convergence across a wide range of widths of AM. Lastly, RSAP is an excellent tool for fitting systems of differential equations to some given data. As such, we have an application for RSAP which involves the parameter estimation/best-fit modeling of galaxy mergers. This has been on ongoing project \cite{jspam, citizen} for a number of years now and the application of RSAP will allow us to automate portions of the workflow which currently take a large number of man-hours to complete.
 
@@ -715,25 +725,25 @@ We would like to acknowledge...
 
 \bibitem{HaarioAP} H. Haario, E. Saksman, and J. Tamminen, \textit{Adaptive proposal distribution for random walk Metropolis algorithm}, Comput. Stat., 14 (1999), pp. 375-395.
 
-\bibitem{HaarioAM} H. Harrio, E. Saksman, J. Tamminen, \textit{An Adaptive Metropolis Algorithm}, Bernoulli, 7(2), 2001, pp. 223-242.
+\bibitem{HaarioAM} H. Harrio, E. Saksman, J. Tamminen, \textit{An Adaptive Metropolis Algorithm}, Bernoulli, 7 (2001), pp. 223-242.
 
 \bibitem{Hastings} W. K. Hastings, \textit{Monte Carlo sampling methods using Markov chains and their applications}, Biometrika, 57 (1970), pp. 97-109.
 
-\bibitem{citizen} A. Holincheck, J. Wallin, K. Borne, L. Fortson, C. Lintott, A M. Smith, S. Bamford, W. Keel, and M. Parrish, \textit{Galaxy Zoo: Mergers - Dynamical Models of Interacting Galaxies}, MNRAS, 459(1) (2016), pp. 720-745.
+\bibitem{citizen} A. Holincheck, J. Wallin, K. Borne, L. Fortson, C. Lintott, A M. Smith, S. Bamford, W. Keel, and M. Parrish, \textit{Galaxy Zoo: Mergers - Dynamical Models of Interacting Galaxies}, MNRAS, 459 (2016), pp. 720-745.
 
-\bibitem{Interact} L. Jing and P. Vadakkepat, \textit{Interacting MCMC particle filter for tracking maneuvering target}, Digital Signal Processing, 20(2) (2010), pp. 561-574.
+\bibitem{Interact} L. Jing and P. Vadakkepat, \textit{Interacting MCMC particle filter for tracking maneuvering target}, Digital Signal Processing, 20 (2010), pp. 561-574.
 
 \bibitem{Metro} N. Metropolis, A. W. Rosenbluth, M. N. Rosenbluth, A. H. Teller, and E. Teller, \textit{"Equation of state calculations by fast computing machines}, Journal of Chemical Physics, 21 (1953), pp. 1087-1092.
 
 \bibitem{SigScale} G. O. Roberts, A. Gelman, and W. R. Gilks, \textit{Weak convergence and optimal scaling of random walk Metropolis algorithms}, Ann. Appl. Probab., 7 (1997), pp. 110-120.
 
-\bibitem{AdaptReview} G. O. Roberts and J. S. Rosenthal, \textit{Examples of Adaptive MCMC}, Journal of Computational and Graphical Statistics, 18:2 (2012), pp. 349-367.%, DOI: 10.1198/jcgs.2009.06134
+\bibitem{AdaptReview} G. O. Roberts and J. S. Rosenthal, \textit{Examples of Adaptive MCMC}, Journal of Computational and Graphical Statistics, 18 (2012), pp. 349-367.%, DOI: 10.1198/jcgs.2009.06134
 
-\bibitem{RRAdaptErgo} G. O. Roberts and J. S. Rosenthal. \textit{Coupling and Ergodicity of Adaptive Markov Chain Monte Carlo Algorithms}, Journal of Applied Probability, 44(2) (2007), pp. 458-475
+\bibitem{RRAdaptErgo} G. O. Roberts and J. S. Rosenthal. \textit{Coupling and Ergodicity of Adaptive Markov Chain Monte Carlo Algorithms}, Journal of Applied Probability, 44 (2007), pp. 458-475
 
-\bibitem{AM_RR} G. O. Roberts, and J. S. Rosenthal, \textit{Examples of adaptive MCMC}, Journal of Computational and Graphical Statistics, 18(2) (2009), pp. 349-367.
+\bibitem{AM_RR} G. O. Roberts, and J. S. Rosenthal, \textit{Examples of adaptive MCMC}, Journal of Computational and Graphical Statistics, 18 (2009), pp. 349-367.
 
-\bibitem{RWM} C. Sherlock, P. Fearnhead, G. O. Roberts, \textit{The Random Walk Metropolis: Linking Theory and Practice Through a Case Study}, Statist. Sci., 25 (2010), no. 2, pp. 172-190.% doi:10.1214/10-STS327. https://projecteuclid.org/euclid.ss/1290175840
+\bibitem{RWM} C. Sherlock, P. Fearnhead, G. O. Roberts, \textit{The Random Walk Metropolis: Linking Theory and Practice Through a Case Study}, Statist. Sci., 25 (2010), pp. 172-190.% doi:10.1214/10-STS327. https://projecteuclid.org/euclid.ss/1290175840
 
 \bibitem{jspam} J. Wallin, A. Holincheck, and A. Harvey, \textit{JSPAM: A restricted three-body code for simulating interacting galaxies.}, Astronomy and Computing, 16 (2016), pp. 26-33. 
 
